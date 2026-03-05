@@ -30,14 +30,14 @@ export default function WasteComparisonChart({ projections }: Props) {
 
   if (chartData.length === 0) {
     return (
-      <div className="rounded-xl border border-border bg-card p-10 text-center">
+      <div className="rounded-2xl border border-border bg-card p-10 text-center">
         <p className="text-muted-foreground">No waste data to display.</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6">
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-2xs">
       <h3 className="mb-1 text-base font-semibold text-foreground">
         Waste Comparison by Product
       </h3>
@@ -96,12 +96,12 @@ export default function WasteComparisonChart({ projections }: Props) {
             />
             <Bar dataKey="before" radius={[6, 6, 0, 0]} maxBarSize={40}>
               {chartData.map((_, index) => (
-                <Cell key={`before-${index}`} fill="#ef4444" fillOpacity={0.8} />
+                <Cell key={`before-${index}`} fill="var(--color-destructive, #ef4444)" fillOpacity={0.8} />
               ))}
             </Bar>
             <Bar dataKey="after" radius={[6, 6, 0, 0]} maxBarSize={40}>
               {chartData.map((_, index) => (
-                <Cell key={`after-${index}`} fill="#22c55e" fillOpacity={0.8} />
+                <Cell key={`after-${index}`} fill="var(--color-primary, #22c55e)" fillOpacity={0.8} />
               ))}
             </Bar>
           </BarChart>

@@ -39,7 +39,7 @@ export default function KPICard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: index * 0.07, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
-      <Card className="bg-card shadow-xs hover:shadow-sm transition-shadow">
+      <Card className="bg-card shadow-2xs hover:shadow-xs transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <span className="text-sm font-medium text-muted-foreground">{title}</span>
           <Icon className="h-4 w-4 text-muted-foreground" strokeWidth={1.8} />

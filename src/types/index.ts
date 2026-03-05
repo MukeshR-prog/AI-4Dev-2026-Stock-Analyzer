@@ -24,8 +24,10 @@ export interface StoreProduct {
 
 export interface BranchInsight {
   branch: string;
-  milkSales: string;
+  salesPerDay: number;
   inventory: number;
+  demandLevel: "High Demand" | "Balanced" | "Low Demand";
+  transferOpportunity: "Send Stock" | "Receive Stock" | "None";
 }
 
 export interface Recommendation {

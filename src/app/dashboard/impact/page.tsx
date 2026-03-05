@@ -48,7 +48,7 @@ export default function ImpactPage() {
     <div className="space-y-8">
       {/* ── Page Header ── */}
       <div>
-        <h1 className="text-2xl font-bold text-foreground">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">
           Waste Impact Simulation
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -65,30 +65,27 @@ export default function ImpactPage() {
           label="Current Predicted Waste"
           value={`${totals.totalWasteBefore} units`}
           subtitle="Without any action taken"
-          icon={<Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />}
-          iconBg="bg-red-50 dark:bg-red-950/40"
-          valueColor="text-red-600 dark:text-red-400"
-          borderColor="border-l-red-500"
+          icon={<Trash2 className="h-6 w-6 text-destructive" />}
+          iconBg="bg-destructive/10"
+          valueColor="text-destructive"
         />
 
         <WasteImpactCard
           label="Projected Waste After Actions"
           value={`${totals.totalWasteAfter} units`}
           subtitle="If all recommendations are applied"
-          icon={<Leaf className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />}
-          iconBg="bg-emerald-50 dark:bg-emerald-950/40"
-          valueColor="text-emerald-600 dark:text-emerald-400"
-          borderColor="border-l-emerald-500"
+          icon={<Leaf className="h-6 w-6 text-primary" />}
+          iconBg="bg-primary/10"
+          valueColor="text-primary"
         />
 
         <WasteImpactCard
           label="Waste Reduction"
           value={`${totals.reductionPercent}%`}
           subtitle={`${totals.totalSaved} units saved`}
-          icon={<TrendingDown className="h-6 w-6 text-blue-600 dark:text-blue-400" />}
-          iconBg="bg-blue-50 dark:bg-blue-950/40"
-          valueColor="text-blue-600 dark:text-blue-400"
-          borderColor="border-l-blue-500"
+          icon={<TrendingDown className="h-6 w-6 text-chart-2" />}
+          iconBg="bg-chart-2/10"
+          valueColor="text-chart-2"
         />
       </div>
 
@@ -96,7 +93,7 @@ export default function ImpactPage() {
       <WasteComparisonChart projections={projections} />
 
       {/* ── Info Banner ── */}
-      <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/10 px-5 py-4">
+      <div className="flex items-start gap-3 rounded-2xl border border-primary/20 bg-primary/10 px-5 py-4">
         <BarChart3 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
         <p className="text-sm text-foreground">
           <span className="font-semibold">How this works:</span> The simulation
@@ -111,7 +108,7 @@ export default function ImpactPage() {
       <ImpactSummary effects={effects} />
 
       {/* ── Per-Product Breakdown Table ── */}
-      <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
         <div className="px-6 py-4 border-b border-border">
           <h3 className="text-base font-semibold text-foreground">
             Per-Product Waste Projection
@@ -169,8 +166,8 @@ export default function ImpactPage() {
                     <span
                       className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
                         p.predictedWasteBefore > 0
-                          ? "bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-300"
-                          : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
+                          ? "bg-destructive/10 text-destructive"
+                          : "bg-primary/10 text-primary"
                       }`}
                     >
                       {p.predictedWasteBefore}
@@ -180,8 +177,8 @@ export default function ImpactPage() {
                     <span
                       className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
                         p.predictedWasteAfter > 0
-                          ? "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
-                          : "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300"
+                          ? "bg-chart-4/10 text-chart-4"
+                          : "bg-primary/10 text-primary"
                       }`}
                     >
                       {p.predictedWasteAfter}
@@ -189,7 +186,7 @@ export default function ImpactPage() {
                   </td>
                   <td className="px-6 py-3 text-right">
                     {p.savedUnits > 0 ? (
-                      <span className="inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400 font-semibold">
+                      <span className="inline-flex items-center gap-1 text-primary font-semibold">
                         +{p.savedUnits}
                       </span>
                     ) : (

@@ -8,20 +8,20 @@ interface Props {
 
 export default function RecommendationCard({ data }: Props) {
   const priorityStyles = {
-    high: "border-l-red-500",
-    medium: "border-l-amber-400",
-    low: "border-l-blue-400",
+    high: "",
+    medium: "",
+    low: "",
   };
 
   return (
     <div
-      className={`rounded-xl border border-border border-l-4 ${priorityStyles[data.priority]} bg-card p-6 transition-shadow hover:shadow-md`}
+      className={`rounded-2xl border border-border bg-card p-6 shadow-2xs transition-shadow hover:shadow-xs ${priorityStyles[data.priority]}`}
     >
       {/* Header: product name + badge */}
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-red-50 dark:bg-red-950/40">
-            <AlertTriangle className="h-4.5 w-4.5 text-red-600 dark:text-red-400" />
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-destructive/10">
+            <AlertTriangle className="h-4.5 w-4.5 text-destructive" />
           </span>
           <h3 className="text-base font-semibold text-foreground">{data.product}</h3>
         </div>
@@ -29,8 +29,8 @@ export default function RecommendationCard({ data }: Props) {
       </div>
 
       {/* Issue */}
-      <div className="mt-4 rounded-lg bg-red-50/60 dark:bg-red-950/20 border border-red-200/60 dark:border-red-800/40 px-4 py-3">
-        <p className="text-sm text-red-700 dark:text-red-300 leading-relaxed flex items-start gap-2">
+      <div className="mt-4 rounded-xl bg-destructive/5 border border-destructive/20 px-4 py-3">
+        <p className="text-sm text-destructive leading-relaxed flex items-start gap-2">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
             <span className="font-medium">Issue Detected:</span> {data.issue}
@@ -39,7 +39,7 @@ export default function RecommendationCard({ data }: Props) {
       </div>
 
       {/* Action */}
-      <div className="mt-3 rounded-lg bg-primary/10 border border-primary/20 px-4 py-3">
+      <div className="mt-3 rounded-xl bg-primary/10 border border-primary/20 px-4 py-3">
         <p className="text-sm text-foreground leading-relaxed flex items-start gap-2">
           <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
           <span>
@@ -49,7 +49,7 @@ export default function RecommendationCard({ data }: Props) {
       </div>
 
       {/* Reason */}
-      <div className="mt-3 rounded-lg bg-muted/50 px-4 py-3">
+      <div className="mt-3 rounded-xl bg-muted/50 px-4 py-3">
         <p className="text-sm text-muted-foreground leading-relaxed flex items-start gap-2">
           <Info className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
@@ -64,12 +64,12 @@ export default function RecommendationCard({ data }: Props) {
           Units affected: <span className="font-semibold text-foreground">{data.units}</span>
         </span>
         <span
-          className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+          className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
             data.priority === "high"
-              ? "bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-300"
+              ? "bg-destructive/10 text-destructive"
               : data.priority === "medium"
-                ? "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
-                : "bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
+                ? "bg-chart-4/10 text-chart-4"
+                : "bg-chart-2/10 text-chart-2"
           }`}
         >
           {data.priority} priority

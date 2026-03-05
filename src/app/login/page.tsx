@@ -60,8 +60,10 @@ export default function LoginPage() {
           <h1 className="text-2xl font-bold text-foreground">
             Retail Intelligence Platform
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Reduce waste. Optimise inventory. Smarter retail.
+          <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+            Reduce food waste through intelligent inventory analytics.
+            Track expiry risks, optimise stock across branches, and make
+            smarter retail decisions.
           </p>
         </div>
 
@@ -76,7 +78,7 @@ export default function LoginPage() {
           <button
             onClick={handleGoogleLogin}
             disabled={signingIn}
-            className="flex w-full items-center justify-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground shadow-sm transition-all hover:bg-accent hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex w-full items-center justify-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-sm font-semibold text-foreground shadow-2xs transition-all hover:bg-accent hover:shadow-xs disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {signingIn ? (
               <span className="flex items-center gap-2">

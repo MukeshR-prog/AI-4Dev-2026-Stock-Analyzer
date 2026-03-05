@@ -9,23 +9,23 @@ const config: Record<
 > = {
   transfer: {
     label: "Transfer Inventory",
-    bg: "bg-blue-50 dark:bg-blue-950/40",
-    text: "text-blue-700 dark:text-blue-300",
-    border: "border-blue-200 dark:border-blue-800",
+    bg: "bg-chart-2/10",
+    text: "text-chart-2",
+    border: "border-chart-2/20",
     icon: ArrowRightLeft,
   },
   discount: {
     label: "Apply Discount",
-    bg: "bg-amber-50 dark:bg-amber-950/40",
-    text: "text-amber-700 dark:text-amber-300",
-    border: "border-amber-200 dark:border-amber-800",
+    bg: "bg-chart-4/10",
+    text: "text-chart-4",
+    border: "border-chart-4/20",
     icon: Percent,
   },
   donation: {
     label: "Donate Surplus",
-    bg: "bg-emerald-50 dark:bg-emerald-950/40",
-    text: "text-emerald-700 dark:text-emerald-300",
-    border: "border-emerald-200 dark:border-emerald-800",
+    bg: "bg-primary/10",
+    text: "text-primary",
+    border: "border-primary/20",
     icon: Heart,
   },
 };
