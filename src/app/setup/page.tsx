@@ -4,10 +4,22 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
-const companies = [
-  { id: "reliance-smart", name: "Reliance Smart" },
-  { id: "dmart", name: "DMart" },
-  { id: "daily-fresh", name: "Daily Fresh" },
+const companiesData = [
+  {
+    id: "reliance-smart",
+    name: "Reliance Smart",
+    branches: ["Branch 1", "Branch 2", "Branch 3", "Branch 4", "Branch 5"],
+  },
+  {
+    id: "dmart",
+    name: "DMart",
+    branches: ["Branch 1", "Branch 2", "Branch 3"],
+  },
+  {
+    id: "daily-fresh",
+    name: "Daily Fresh",
+    branches: ["Branch 1", "Branch 2", "Branch 3"],
+  },
 ];
 
 export default function SetupPage() {
@@ -19,6 +31,14 @@ export default function SetupPage() {
   const [role] = useState("store_manager");
   const [submitting, setSubmitting] = useState(false);
 
+  const selectedCompany = companiesData.find((c) => c.id === company);
+
+  // Reset branch when company changes
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setBranch("");
+  }, [company]);
+
   // If not logged in → login. If already set up → dashboard.
   useEffect(() => {
     if (!loading && !firebaseUser) {
@@ -29,12 +49,12 @@ export default function SetupPage() {
     }
   }, [loading, firebaseUser, profile, router]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!company || !branch) return;
     setSubmitting(true);
-    const companyName = companies.find((c) => c.id === company)?.name || company;
-    completeSetup(companyName, branch, role);
+    const companyName = selectedCompany?.name || company;
+    await completeSetup(companyName, branch, role);
     router.push("/dashboard");
   };
 
@@ -78,7 +98,7 @@ export default function SetupPage() {
               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             >
               <option value="">Select Company</option>
-              {companies.map((c) => (
+              {companiesData.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
                 </option>
@@ -89,17 +109,23 @@ export default function SetupPage() {
           {/* Branch */}
           <div>
             <label htmlFor="branch" className="mb-1.5 block text-sm font-medium text-slate-700">
-              Branch Name
+              Branch
             </label>
-            <input
+            <select
               id="branch"
-              type="text"
               value={branch}
               onChange={(e) => setBranch(e.target.value)}
-              placeholder="e.g. Branch 5 - Mumbai Central"
               required
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-            />
+              disabled={!company}
+              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed"
+            >
+              <option value="">Select Branch</option>
+              {selectedCompany?.branches.map((b) => (
+                <option key={b} value={b}>
+                  {b}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Role (read-only for now) */}

@@ -3,7 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
-import Navbar from "@/components/Navbar";
+import Sidebar from "@/components/Sidebar";
+import TopBar from "@/components/TopBar";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { firebaseUser, profile, loading } = useAuth();
@@ -29,8 +30,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Navbar />
-      <main className="mx-auto max-w-7xl px-6 py-8">{children}</main>
+      <Sidebar />
+      <TopBar />
+      <main className="ml-64 mt-16 p-8">{children}</main>
     </div>
   );
 }
