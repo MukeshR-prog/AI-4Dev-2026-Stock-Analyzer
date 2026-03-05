@@ -14,23 +14,14 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/table";
-import {
-  AlertTriangle,
-  ShieldAlert,
-  ShieldCheck,
-  ArrowUpRight,
-  Timer,
-  Hash,
-} from "lucide-react";
 
 const riskConfig: Record<ExpiryRisk, {
   variant: "danger" | "warning" | "success";
-  icon: React.ElementType;
   dotColor: string;
 }> = {
-  High: { variant: "danger", icon: ShieldAlert, dotColor: "bg-destructive" },
-  Medium: { variant: "warning", icon: AlertTriangle, dotColor: "bg-chart-4" },
-  Low: { variant: "success", icon: ShieldCheck, dotColor: "bg-primary" },
+  High: { variant: "danger", dotColor: "bg-destructive" },
+  Medium: { variant: "warning", dotColor: "bg-chart-4" },
+  Low: { variant: "success", dotColor: "bg-primary" },
 };
 
 interface Props {
@@ -42,48 +33,26 @@ export default function StoreTable({ data }: Props) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.3 }}
+      transition={{ duration: 0.4, delay: 0.25 }}
     >
-      <Card className="overflow-hidden border-border/50">
+      <Card className="overflow-hidden shadow-xs">
         <Table>
           <TableHeader>
-            <TableRow className="bg-muted/40 hover:bg-muted/40">
-              <TableHead className="w-[200px] text-xs font-semibold uppercase tracking-wider">
-                Product
-              </TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wider">
-                Category
-              </TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wider">
-                <span className="flex items-center gap-1.5">
-                  <Hash className="h-3 w-3" />
-                  Stock
-                </span>
-              </TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wider">
-                <span className="flex items-center gap-1.5">
-                  <Timer className="h-3 w-3" />
-                  Expiry
-                </span>
-              </TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wider">
-                <span className="flex items-center gap-1.5">
-                  <ArrowUpRight className="h-3 w-3" />
-                  Velocity
-                </span>
-              </TableHead>
-              <TableHead className="text-xs font-semibold uppercase tracking-wider">
-                Risk
-              </TableHead>
+            <TableRow className="bg-muted/30 hover:bg-muted/30">
+              <TableHead className="w-[200px]">Product</TableHead>
+              <TableHead>Category</TableHead>
+              <TableHead>Stock</TableHead>
+              <TableHead>Expiry</TableHead>
+              <TableHead>Velocity</TableHead>
+              <TableHead>Risk</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((row, i) => {
               const risk = calculateExpiryRisk(row);
               const config = riskConfig[risk];
-              const RiskIcon = config.icon;
               const stockPercent = Math.round((row.stock / maxStock) * 100);
 
               return (
@@ -91,30 +60,25 @@ export default function StoreTable({ data }: Props) {
                   key={i}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  transition={{ duration: 0.25, delay: 0.04 * i }}
-                  className={cn(
-                    "border-b transition-colors hover:bg-muted/30",
-                    risk === "High" && "bg-destructive/10"
-                  )}
+                  transition={{ duration: 0.2, delay: 0.03 * i }}
+                  className="border-b transition-colors hover:bg-muted/50"
                 >
-                  <TableCell className="font-medium text-foreground">
-                    {row.product}
-                  </TableCell>
+                  <TableCell className="font-medium">{row.product}</TableCell>
                   <TableCell>
-                    <Badge variant="secondary" className="rounded-md font-normal">
+                    <Badge variant="secondary" className="font-normal">
                       {row.category}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-3">
-                      <span className="w-8 text-right font-mono text-sm tabular-nums text-foreground">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-7 text-right font-mono text-sm tabular-nums">
                         {row.stock}
                       </span>
-                      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
+                      <div className="h-1.5 w-14 overflow-hidden rounded-full bg-muted">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${stockPercent}%` }}
-                          transition={{ duration: 0.6, delay: 0.04 * i + 0.2 }}
+                          transition={{ duration: 0.5, delay: 0.03 * i + 0.15 }}
                           className={cn(
                             "h-full rounded-full",
                             stockPercent > 60 ? "bg-primary" : stockPercent > 30 ? "bg-chart-4" : "bg-destructive",
@@ -126,15 +90,14 @@ export default function StoreTable({ data }: Props) {
                   <TableCell>
                     <span className={cn(
                       "font-mono text-sm tabular-nums",
-                      row.expiryDays <= 3 ? "font-semibold text-destructive" : "text-muted-foreground",
+                      row.expiryDays <= 3 ? "font-medium text-destructive" : "text-muted-foreground",
                     )}>
                       {row.expiryDays}d
                     </span>
                   </TableCell>
                   <TableCell>
                     <span className="font-mono text-sm tabular-nums text-muted-foreground">
-                      {row.salesPerDay}
-                      <span className="text-xs text-muted-foreground/60">/day</span>
+                      {row.salesPerDay}/day
                     </span>
                   </TableCell>
                   <TableCell>

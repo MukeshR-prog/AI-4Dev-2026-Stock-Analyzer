@@ -29,10 +29,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/30">
       <Sidebar />
       <TopBar />
-      <main className="ml-64 mt-16 p-8">{children}</main>
+      <main className="ml-64 mt-14 p-8">{children}</main>
     </div>
   );
 }
