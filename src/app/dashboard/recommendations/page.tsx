@@ -4,20 +4,25 @@ import { useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import RecommendationCard from "@/components/RecommendationCard";
 import RecommendationSummary from "@/components/RecommendationSummary";
+import InsightCard from "@/components/InsightCard";
 import {
   getMockInventory,
   getMockBranchDemand,
   generateRecommendations,
 } from "@/lib/recommendationEngine";
+import { generateRecommendationInsights } from "@/lib/insightEngine";
+import { BrainCircuit } from "lucide-react";
 
 export default function RecommendationsPage() {
   const { profile } = useAuth();
 
-  const recommendations = useMemo(() => {
-    if (!profile) return [];
+  const { recommendations, insights } = useMemo(() => {
+    if (!profile) return { recommendations: [], insights: [] };
     const inventory = getMockInventory(profile.branch);
     const demand = getMockBranchDemand(profile.branch);
-    return generateRecommendations(inventory, demand);
+    const recs = generateRecommendations(inventory, demand);
+    const ins = generateRecommendationInsights(recs, inventory, demand);
+    return { recommendations: recs, insights: ins };
   }, [profile]);
 
   if (!profile) return null;
@@ -64,6 +69,26 @@ export default function RecommendationsPage() {
           <p className="text-muted-foreground">
             No recommendations at this time. Your inventory looks healthy!
           </p>
+        </div>
+      )}
+
+      {/* ── AI Insights Panel ── */}
+      {insights.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <BrainCircuit className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-semibold tracking-tight text-foreground">
+              AI Insights
+            </h2>
+          </div>
+          <p className="text-sm text-muted-foreground -mt-2">
+            Why each recommendation was generated — full decision transparency.
+          </p>
+          <div className="grid gap-5 lg:grid-cols-2">
+            {insights.map((insight) => (
+              <InsightCard key={insight.id} insight={insight} />
+            ))}
+          </div>
         </div>
       )}
     </div>
