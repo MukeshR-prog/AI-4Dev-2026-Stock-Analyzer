@@ -17,30 +17,30 @@ const typeConfig: Record<
 > = {
   "expiry-risk": {
     icon: AlertTriangle,
-    iconColor: "text-red-600 dark:text-red-400",
-    iconBg: "bg-red-50 dark:bg-red-950/40",
-    accentBorder: "border-l-red-500",
+    iconColor: "text-destructive",
+    iconBg: "bg-destructive/10",
+    accentBorder: "",
     label: "Expiry Risk",
-    labelColor: "text-red-700 dark:text-red-300",
-    labelBg: "bg-red-50 dark:bg-red-950/40 border-red-200 dark:border-red-800",
+    labelColor: "text-destructive",
+    labelBg: "bg-destructive/10 border-destructive/20",
   },
   "demand-difference": {
     icon: TrendingUp,
-    iconColor: "text-amber-600 dark:text-amber-400",
-    iconBg: "bg-amber-50 dark:bg-amber-950/40",
-    accentBorder: "border-l-amber-400",
+    iconColor: "text-chart-4",
+    iconBg: "bg-chart-4/10",
+    accentBorder: "",
     label: "Demand Insight",
-    labelColor: "text-amber-700 dark:text-amber-300",
-    labelBg: "bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800",
+    labelColor: "text-chart-4",
+    labelBg: "bg-chart-4/10 border-chart-4/20",
   },
   redistribution: {
     icon: ArrowRightLeft,
-    iconColor: "text-blue-600 dark:text-blue-400",
-    iconBg: "bg-blue-50 dark:bg-blue-950/40",
-    accentBorder: "border-l-blue-500",
+    iconColor: "text-chart-2",
+    iconBg: "bg-chart-2/10",
+    accentBorder: "",
     label: "Redistribution",
-    labelColor: "text-blue-700 dark:text-blue-300",
-    labelBg: "bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800",
+    labelColor: "text-chart-2",
+    labelBg: "bg-chart-2/10 border-chart-2/20",
   },
 };
 
@@ -54,7 +54,7 @@ export default function InsightCard({ insight }: Props) {
 
   return (
     <div
-      className={`rounded-xl border border-border border-l-4 ${cfg.accentBorder} bg-card p-5 transition-shadow hover:shadow-md`}
+      className={`rounded-2xl border border-border bg-card p-6 shadow-2xs transition-shadow hover:shadow-xs ${cfg.accentBorder}`}
     >
       {/* Header */}
       <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
@@ -69,7 +69,7 @@ export default function InsightCard({ insight }: Props) {
           </h4>
         </div>
         <span
-          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${cfg.labelBg} ${cfg.labelColor}`}
+          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium ${cfg.labelBg} ${cfg.labelColor}`}
         >
           {cfg.label}
         </span>
@@ -89,7 +89,7 @@ export default function InsightCard({ insight }: Props) {
       </ul>
 
       {/* Conclusion */}
-      <div className="rounded-lg bg-muted/50 border border-border px-4 py-3">
+      <div className="rounded-xl bg-muted/50 border border-border px-4 py-3">
         <p className="text-sm font-medium text-foreground leading-relaxed">
           {insight.conclusion}
         </p>
@@ -98,12 +98,12 @@ export default function InsightCard({ insight }: Props) {
       {/* Severity */}
       <div className="mt-3 flex justify-end">
         <span
-          className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+          className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
             insight.severity === "high"
-              ? "bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-300"
+              ? "bg-destructive/10 text-destructive"
               : insight.severity === "medium"
-                ? "bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300"
-                : "bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300"
+                ? "bg-chart-4/10 text-chart-4"
+                : "bg-chart-2/10 text-chart-2"
           }`}
         >
           {insight.severity} severity

@@ -9,23 +9,23 @@ const typeConfig: Record<
 > = {
   transfer: {
     icon: ArrowRightLeft,
-    bg: "bg-blue-50 dark:bg-blue-950/40",
-    text: "text-blue-700 dark:text-blue-300",
-    border: "border-blue-200 dark:border-blue-800",
+    bg: "bg-chart-2/10",
+    text: "text-chart-2",
+    border: "border-chart-2/20",
     label: "Transfer",
   },
   discount: {
     icon: Percent,
-    bg: "bg-amber-50 dark:bg-amber-950/40",
-    text: "text-amber-700 dark:text-amber-300",
-    border: "border-amber-200 dark:border-amber-800",
+    bg: "bg-chart-4/10",
+    text: "text-chart-4",
+    border: "border-chart-4/20",
     label: "Discount",
   },
   donation: {
     icon: Heart,
-    bg: "bg-emerald-50 dark:bg-emerald-950/40",
-    text: "text-emerald-700 dark:text-emerald-300",
-    border: "border-emerald-200 dark:border-emerald-800",
+    bg: "bg-primary/10",
+    text: "text-primary",
+    border: "border-primary/20",
     label: "Donation",
   },
 };
@@ -38,7 +38,7 @@ export default function ImpactSummary({ effects }: Props) {
   if (effects.length === 0) return null;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6">
+    <div className="rounded-2xl border border-border bg-card p-6 shadow-2xs">
       <h3 className="mb-1 text-base font-semibold text-foreground">
         Recommendation Effect Breakdown
       </h3>
@@ -57,7 +57,7 @@ export default function ImpactSummary({ effects }: Props) {
               className={`flex items-start gap-4 rounded-xl border px-5 py-4 ${cfg.border} ${cfg.bg}`}
             >
               <span
-                className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/80 dark:bg-white/10`}
+                className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-card`}
               >
                 <Icon className={`h-4.5 w-4.5 ${cfg.text}`} />
               </span>
@@ -76,9 +76,9 @@ export default function ImpactSummary({ effects }: Props) {
                 <p className="mt-1 text-sm text-foreground/80">{effect.action}</p>
               </div>
 
-              <div className="flex shrink-0 items-center gap-1.5 rounded-lg bg-white/60 dark:bg-white/10 px-3 py-1.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-                <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">
+              <div className="flex shrink-0 items-center gap-1.5 rounded-lg bg-card px-3 py-1.5">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                <span className="text-sm font-bold text-primary">
                   {effect.unitsSaved} units saved
                 </span>
               </div>

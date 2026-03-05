@@ -9,7 +9,6 @@ interface Props {
   icon: ReactNode;
   iconBg: string;
   valueColor?: string;
-  borderColor?: string;
 }
 
 export default function WasteImpactCard({
@@ -19,13 +18,10 @@ export default function WasteImpactCard({
   icon,
   iconBg,
   valueColor = "text-foreground",
-  borderColor,
 }: Props) {
   return (
     <div
-      className={`rounded-xl border bg-card p-6 transition-shadow hover:shadow-md ${
-        borderColor ? `border-l-4 ${borderColor} border-border` : "border-border"
-      }`}
+      className="rounded-2xl border border-border bg-card p-6 shadow-2xs transition-shadow hover:shadow-xs"
     >
       <div className="flex items-center gap-3">
         <span
