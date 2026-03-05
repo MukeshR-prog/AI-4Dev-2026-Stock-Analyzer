@@ -4,33 +4,33 @@ import type { InventoryItem, ExpiryRisk } from "@/data/inventory";
 import { calculateExpiryRisk } from "@/data/inventory";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+} from "@/components/ui/table";
 import {
   AlertTriangle,
   ShieldAlert,
   ShieldCheck,
-  TrendingUp,
-  Package,
+  ArrowUpRight,
+  Timer,
+  Hash,
 } from "lucide-react";
 
-const riskConfig: Record<ExpiryRisk, { bg: string; text: string; dot: string; icon: React.ElementType }> = {
-  High: {
-    bg: "bg-red-50 border-red-200/60",
-    text: "text-red-700",
-    dot: "bg-red-500",
-    icon: ShieldAlert,
-  },
-  Medium: {
-    bg: "bg-amber-50 border-amber-200/60",
-    text: "text-amber-700",
-    dot: "bg-amber-500",
-    icon: AlertTriangle,
-  },
-  Low: {
-    bg: "bg-emerald-50 border-emerald-200/60",
-    text: "text-emerald-700",
-    dot: "bg-emerald-500",
-    icon: ShieldCheck,
-  },
+const riskConfig: Record<ExpiryRisk, {
+  variant: "danger" | "warning" | "success";
+  icon: React.ElementType;
+  dotColor: string;
+}> = {
+  High: { variant: "danger", icon: ShieldAlert, dotColor: "bg-red-500" },
+  Medium: { variant: "warning", icon: AlertTriangle, dotColor: "bg-amber-500" },
+  Low: { variant: "success", icon: ShieldCheck, dotColor: "bg-emerald-500" },
 };
 
 interface Props {
@@ -38,84 +38,117 @@ interface Props {
 }
 
 export default function StoreTable({ data }: Props) {
+  const maxStock = Math.max(...data.map((d) => d.stock));
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.3 }}
-      className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white shadow-sm"
     >
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-slate-200 bg-slate-50/80">
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                <span className="flex items-center gap-2">
-                  <Package className="h-3.5 w-3.5" />
-                  Product
-                </span>
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+      <Card className="overflow-hidden border-border/50">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/40 hover:bg-muted/40">
+              <TableHead className="w-[200px] text-xs font-semibold uppercase tracking-wider">
+                Product
+              </TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wider">
                 Category
-              </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Stock
-              </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Expiry Days
-              </th>
-              <th className="px-6 py-4 text-right text-xs font-semibold uppercase tracking-wider text-slate-500">
-                <span className="flex items-center justify-end gap-2">
-                  <TrendingUp className="h-3.5 w-3.5" />
-                  Daily Sales
+              </TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wider">
+                <span className="flex items-center gap-1.5">
+                  <Hash className="h-3 w-3" />
+                  Stock
                 </span>
-              </th>
-              <th className="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
-                Expiry Risk
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
+              </TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wider">
+                <span className="flex items-center gap-1.5">
+                  <Timer className="h-3 w-3" />
+                  Expiry
+                </span>
+              </TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wider">
+                <span className="flex items-center gap-1.5">
+                  <ArrowUpRight className="h-3 w-3" />
+                  Velocity
+                </span>
+              </TableHead>
+              <TableHead className="text-xs font-semibold uppercase tracking-wider">
+                Risk
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {data.map((row, i) => {
               const risk = calculateExpiryRisk(row);
               const config = riskConfig[risk];
               const RiskIcon = config.icon;
+              const stockPercent = Math.round((row.stock / maxStock) * 100);
 
               return (
                 <motion.tr
                   key={i}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: 0.05 * i }}
-                  className="group transition-colors hover:bg-slate-50/80"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.25, delay: 0.04 * i }}
+                  className={cn(
+                    "border-b transition-colors hover:bg-muted/30",
+                    risk === "High" && "bg-red-50/30"
+                  )}
                 >
-                  <td className="px-6 py-4 font-medium text-slate-900">{row.product}</td>
-                  <td className="px-6 py-4">
-                    <span className="inline-flex items-center rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
+                  <TableCell className="font-medium text-foreground">
+                    {row.product}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="secondary" className="rounded-md font-normal">
                       {row.category}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <span className="w-8 text-right font-mono text-sm tabular-nums text-foreground">
+                        {row.stock}
+                      </span>
+                      <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
+                        <motion.div
+                          initial={{ width: 0 }}
+                          animate={{ width: `${stockPercent}%` }}
+                          transition={{ duration: 0.6, delay: 0.04 * i + 0.2 }}
+                          className={cn(
+                            "h-full rounded-full",
+                            stockPercent > 60 ? "bg-emerald-400" : stockPercent > 30 ? "bg-amber-400" : "bg-red-400",
+                          )}
+                        />
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <span className={cn(
+                      "font-mono text-sm tabular-nums",
+                      row.expiryDays <= 3 ? "font-semibold text-red-600" : "text-muted-foreground",
+                    )}>
+                      {row.expiryDays}d
                     </span>
-                  </td>
-                  <td className="px-6 py-4 text-right font-mono text-slate-700">{row.stock}</td>
-                  <td className="px-6 py-4 text-right font-mono text-slate-700">{row.expiryDays}d</td>
-                  <td className="px-6 py-4 text-right font-mono text-slate-700">{row.salesPerDay}/day</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={cn(
-                        "inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold",
-                        config.bg,
-                        config.text,
-                      )}
-                    >
-                      <RiskIcon className="h-3 w-3" />
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-mono text-sm tabular-nums text-muted-foreground">
+                      {row.salesPerDay}
+                      <span className="text-xs text-muted-foreground/60">/day</span>
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={config.variant} className="gap-1 rounded-full">
+                      <span className={cn("h-1.5 w-1.5 rounded-full", config.dotColor)} />
                       {risk}
-                    </span>
-                  </td>
+                    </Badge>
+                  </TableCell>
                 </motion.tr>
               );
             })}
-          </tbody>
-        </table>
-      </div>
+          </TableBody>
+        </Table>
+      </Card>
     </motion.div>
   );
 }

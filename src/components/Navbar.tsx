@@ -23,7 +23,7 @@ export default function Navbar() {
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-white text-sm font-bold">
             RI
           </div>
-          <span className="text-lg font-semibold text-slate-900 hidden sm:inline">
+          <span className="font-heading text-lg font-semibold text-slate-900 hidden sm:inline">
             Retail Intelligence
           </span>
         </Link>
