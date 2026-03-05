@@ -1,15 +1,19 @@
 "use client";
 
+import { useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import StoreTable from "@/components/StoreTable";
 import KPICard from "@/components/KPICard";
+import InsightCard from "@/components/InsightCard";
 import { mockInventory, calculateExpiryRisk } from "@/data/inventory";
+import { generateExpiryInsights } from "@/lib/insightEngine";
 import { motion } from "framer-motion";
 import {
   Package,
   Clock,
   ShieldAlert,
   Boxes,
+  BrainCircuit,
 } from "lucide-react";
 
 export default function MyStorePage() {
@@ -86,6 +90,34 @@ export default function MyStorePage() {
           Inventory Overview
         </h2>
         <StoreTable data={mockInventory} />
+      </div>
+
+      {/* AI Insights Panel */}
+      <InsightsPanel />
+    </div>
+  );
+}
+
+function InsightsPanel() {
+  const insights = useMemo(() => generateExpiryInsights(mockInventory), []);
+
+  if (insights.length === 0) return null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2">
+        <BrainCircuit className="h-5 w-5 text-primary" />
+        <h2 className="text-lg font-semibold tracking-tight text-foreground">
+          AI Insights
+        </h2>
+      </div>
+      <p className="text-sm text-muted-foreground -mt-2">
+        Transparent explanations for why items were flagged as at-risk.
+      </p>
+      <div className="grid gap-5 lg:grid-cols-2">
+        {insights.map((insight) => (
+          <InsightCard key={insight.id} insight={insight} />
+        ))}
       </div>
     </div>
   );

@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Store, Building2, Lightbulb } from "lucide-react";
+import { LayoutDashboard, Store, Building2, Lightbulb, BarChart3 } from "lucide-react";
 
 const navLinks = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/my-store", label: "My Store", icon: Store },
   { href: "/dashboard/branch-insights", label: "Branch Insights", icon: Building2 },
   { href: "/dashboard/recommendations", label: "Recommendations", icon: Lightbulb },
+  { href: "/dashboard/impact", label: "Waste Impact", icon: BarChart3 },
 ];
 
 export default function Sidebar() {
