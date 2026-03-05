@@ -2,25 +2,26 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LayoutDashboard, Store, Building2, Lightbulb } from "lucide-react";
 
 const navLinks = [
-  { href: "/dashboard", label: "Dashboard", icon: "📊" },
-  { href: "/dashboard/my-store", label: "My Store", icon: "🏪" },
-  { href: "/dashboard/branch-insights", label: "Branch Insights", icon: "🏢" },
-  { href: "/dashboard/recommendations", label: "Recommendations", icon: "💡" },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard/my-store", label: "My Store", icon: Store },
+  { href: "/dashboard/branch-insights", label: "Branch Insights", icon: Building2 },
+  { href: "/dashboard/recommendations", label: "Recommendations", icon: Lightbulb },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-30 flex h-screen w-64 flex-col border-r border-slate-200 bg-white">
+    <aside className="fixed left-0 top-0 z-30 flex h-screen w-64 flex-col border-r border-sidebar-border bg-sidebar">
       {/* Brand */}
-      <div className="flex h-16 items-center gap-3 border-b border-slate-200 px-6">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-sm font-bold text-white">
+      <div className="flex h-16 items-center gap-3 border-b border-sidebar-border px-6">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-sidebar-primary text-sm font-bold text-sidebar-primary-foreground">
           RI
         </div>
-        <span className="text-lg font-semibold text-slate-900">
+        <span className="font-heading text-lg font-semibold text-foreground">
           Retail Intelligence
         </span>
       </div>
@@ -32,6 +33,7 @@ export default function Sidebar() {
             link.href === "/dashboard"
               ? pathname === "/dashboard"
               : pathname.startsWith(link.href);
+          const Icon = link.icon;
 
           return (
             <Link
@@ -39,11 +41,11 @@ export default function Sidebar() {
               href={link.href}
               className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-emerald-50 text-emerald-700"
-                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                  : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               }`}
             >
-              <span className="text-lg">{link.icon}</span>
+              <Icon className="h-5 w-5" />
               {link.label}
             </Link>
           );
@@ -51,8 +53,8 @@ export default function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-slate-200 px-6 py-4">
-        <p className="text-xs text-slate-400">© 2025 Retail Intelligence</p>
+      <div className="border-t border-sidebar-border px-6 py-4">
+        <p className="text-xs text-muted-foreground">© 2025 Retail Intelligence</p>
       </div>
     </aside>
   );

@@ -34,16 +34,16 @@ export default function BranchInsightsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">📊 Branch Insights</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="text-2xl font-bold text-foreground">Branch Insights</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Comparing branches across{" "}
-          <span className="font-medium text-slate-700">{profile.company}</span>
+          <span className="font-medium text-foreground">{profile.company}</span>
         </p>
       </div>
 
       {/* Info banner */}
-      <div className="rounded-xl border border-blue-200 bg-blue-50 px-5 py-4">
-        <p className="text-sm text-blue-800">
+      <div className="rounded-xl border border-chart-2/30 bg-chart-2/10 px-5 py-4">
+        <p className="text-sm text-foreground">
           <span className="font-semibold">Multi-tenant view:</span> You can only see branches belonging to{" "}
           <strong>{profile.company}</strong>. Data from other companies is not accessible.
         </p>
@@ -52,8 +52,8 @@ export default function BranchInsightsPage() {
       {companyBranches.length > 0 ? (
         <BranchTable data={companyBranches} />
       ) : (
-        <div className="rounded-xl border border-slate-200 bg-white p-10 text-center">
-          <p className="text-slate-500">No branch data available for {profile.company}.</p>
+        <div className="rounded-xl border border-border bg-card p-10 text-center">
+          <p className="text-muted-foreground">No branch data available for {profile.company}.</p>
         </div>
       )}
     </div>

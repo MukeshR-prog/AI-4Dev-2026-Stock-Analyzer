@@ -4,11 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { Store, BarChart3, Lightbulb } from "lucide-react";
 
 const navLinks = [
-  { href: "/dashboard/my-store", label: "My Store", icon: "🏪" },
-  { href: "/dashboard/branch-insights", label: "Branch Insights", icon: "📊" },
-  { href: "/dashboard/recommendations", label: "Recommendations", icon: "💡" },
+  { href: "/dashboard/my-store", label: "My Store", icon: Store },
+  { href: "/dashboard/branch-insights", label: "Branch Insights", icon: BarChart3 },
+  { href: "/dashboard/recommendations", label: "Recommendations", icon: Lightbulb },
 ];
 
 export default function Navbar() {
@@ -16,14 +17,14 @@ export default function Navbar() {
   const { profile, logout } = useAuth();
 
   return (
-    <nav className="border-b border-slate-200 bg-white">
+    <nav className="border-b border-border bg-card">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-3">
         {/* Brand */}
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-600 text-white text-sm font-bold">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">
             RI
           </div>
-          <span className="font-heading text-lg font-semibold text-slate-900 hidden sm:inline">
+          <span className="font-heading text-lg font-semibold text-foreground hidden sm:inline">
             Retail Intelligence
           </span>
         </Link>
@@ -32,17 +33,18 @@ export default function Navbar() {
         <div className="flex items-center gap-1">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
+            const Icon = link.icon;
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-emerald-50 text-emerald-700"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                 }`}
               >
-                <span className="text-base">{link.icon}</span>
+                <Icon className="h-4 w-4" />
                 <span className="hidden md:inline">{link.label}</span>
               </Link>
             );
@@ -54,8 +56,8 @@ export default function Navbar() {
           {profile && (
             <div className="hidden sm:flex items-center gap-2 text-sm">
               <div className="text-right">
-                <p className="font-medium text-slate-900 leading-tight">{profile.name}</p>
-                <p className="text-xs text-slate-500">{profile.company} — {profile.branch}</p>
+                <p className="font-medium text-foreground leading-tight">{profile.name}</p>
+                <p className="text-xs text-muted-foreground">{profile.company} — {profile.branch}</p>
               </div>
               {profile.photoURL ? (
                 <Image
@@ -66,7 +68,7 @@ export default function Navbar() {
                   className="rounded-full"
                 />
               ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white">
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                   {profile.name[0]?.toUpperCase() || "U"}
                 </div>
               )}
@@ -74,7 +76,7 @@ export default function Navbar() {
           )}
           <button
             onClick={logout}
-            className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+            className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
           >
             Sign Out
           </button>

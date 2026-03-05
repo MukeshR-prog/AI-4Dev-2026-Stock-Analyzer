@@ -9,10 +9,10 @@ export default function TopBar() {
   if (!profile) return null;
 
   return (
-    <header className="fixed left-64 right-0 top-0 z-20 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-8">
+    <header className="fixed left-64 right-0 top-0 z-20 flex h-16 items-center justify-between border-b border-border bg-card px-8">
       {/* Page context */}
       <div>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-muted-foreground">
           {profile.company} &middot; {profile.branch}
         </p>
       </div>
@@ -20,10 +20,10 @@ export default function TopBar() {
       {/* User info */}
       <div className="flex items-center gap-4">
         <div className="text-right">
-          <p className="text-sm font-medium text-slate-900 leading-tight">
+          <p className="text-sm font-medium text-foreground leading-tight">
             {profile.name}
           </p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-muted-foreground">
             {profile.role.replace("_", " ")}
           </p>
         </div>
@@ -37,14 +37,14 @@ export default function TopBar() {
             className="rounded-full"
           />
         ) : (
-          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white">
+          <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
             {profile.name[0]?.toUpperCase() || "U"}
           </div>
         )}
 
         <button
           onClick={logout}
-          className="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-600 transition-colors hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+          className="rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
         >
           Sign Out
         </button>

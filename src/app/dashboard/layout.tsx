@@ -22,14 +22,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (loading || !firebaseUser || !profile) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-background">
       <Sidebar />
       <TopBar />
       <main className="ml-64 mt-16 p-8">{children}</main>

@@ -18,28 +18,28 @@ interface KPICardProps {
 
 const accentMap = {
   default: {
-    iconWrapper: "bg-slate-50 ring-1 ring-slate-200/70",
-    iconColor: "text-slate-500",
+    iconWrapper: "bg-muted ring-1 ring-border/70",
+    iconColor: "text-muted-foreground",
     valueTxt: "text-foreground",
     trendColor: "text-muted-foreground",
   },
   red: {
-    iconWrapper: "bg-red-50 ring-1 ring-red-200/70",
-    iconColor: "text-red-500",
-    valueTxt: "text-red-600",
-    trendColor: "text-red-500",
+    iconWrapper: "bg-destructive/10 ring-1 ring-destructive/20",
+    iconColor: "text-destructive",
+    valueTxt: "text-destructive",
+    trendColor: "text-destructive",
   },
   amber: {
-    iconWrapper: "bg-amber-50 ring-1 ring-amber-200/70",
-    iconColor: "text-amber-500",
-    valueTxt: "text-amber-600",
-    trendColor: "text-amber-500",
+    iconWrapper: "bg-chart-4/10 ring-1 ring-chart-4/20",
+    iconColor: "text-chart-4",
+    valueTxt: "text-chart-4",
+    trendColor: "text-chart-4",
   },
   emerald: {
-    iconWrapper: "bg-emerald-50 ring-1 ring-emerald-200/70",
-    iconColor: "text-emerald-500",
-    valueTxt: "text-emerald-600",
-    trendColor: "text-emerald-500",
+    iconWrapper: "bg-primary/10 ring-1 ring-primary/20",
+    iconColor: "text-primary",
+    valueTxt: "text-primary",
+    trendColor: "text-primary",
   },
 } as const;
 
@@ -71,10 +71,10 @@ export default function KPICard({
         <div
           className={cn(
             "absolute left-0 top-0 h-full w-1 rounded-l-xl transition-all duration-300 group-hover:w-1.5",
-            accent === "red" && "bg-red-400",
-            accent === "amber" && "bg-amber-400",
-            accent === "emerald" && "bg-emerald-400",
-            accent === "default" && "bg-slate-300",
+            accent === "red" && "bg-destructive",
+            accent === "amber" && "bg-chart-4",
+            accent === "emerald" && "bg-primary",
+            accent === "default" && "bg-border",
           )}
         />
 
@@ -112,8 +112,8 @@ export default function KPICard({
                       <TIcon
                         className={cn(
                           "h-3.5 w-3.5",
-                          trend.direction === "up" && "text-emerald-500",
-                          trend.direction === "down" && "text-red-500",
+                          trend.direction === "up" && "text-primary",
+                          trend.direction === "down" && "text-destructive",
                           trend.direction === "neutral" && "text-muted-foreground",
                         )}
                       />
@@ -122,8 +122,8 @@ export default function KPICard({
                   <span
                     className={cn(
                       "text-xs font-medium",
-                      trend.direction === "up" && "text-emerald-600",
-                      trend.direction === "down" && "text-red-600",
+                      trend.direction === "up" && "text-primary",
+                      trend.direction === "down" && "text-destructive",
                       trend.direction === "neutral" && "text-muted-foreground",
                     )}
                   >

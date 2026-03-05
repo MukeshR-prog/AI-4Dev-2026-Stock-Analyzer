@@ -60,22 +60,22 @@ export default function SetupPage() {
 
   if (loading || (!loading && !firebaseUser)) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 px-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-600 text-xl font-bold text-white shadow-lg shadow-emerald-200">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-xl font-bold text-primary-foreground shadow-lg shadow-primary/20">
             RI
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">Complete Your Setup</h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-foreground">Complete Your Setup</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
             Welcome, {firebaseUser?.displayName || "there"}! Select your company and branch.
           </p>
         </div>
@@ -83,11 +83,11 @@ export default function SetupPage() {
         {/* Form */}
         <form
           onSubmit={handleSubmit}
-          className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm space-y-5"
+          className="rounded-2xl border border-border bg-card p-8 shadow-sm space-y-5"
         >
           {/* Company */}
           <div>
-            <label htmlFor="company" className="mb-1.5 block text-sm font-medium text-slate-700">
+            <label htmlFor="company" className="mb-1.5 block text-sm font-medium text-foreground">
               Company
             </label>
             <select
@@ -95,7 +95,7 @@ export default function SetupPage() {
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               required
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-ring/20"
             >
               <option value="">Select Company</option>
               {companiesData.map((c) => (
@@ -108,7 +108,7 @@ export default function SetupPage() {
 
           {/* Branch */}
           <div>
-            <label htmlFor="branch" className="mb-1.5 block text-sm font-medium text-slate-700">
+            <label htmlFor="branch" className="mb-1.5 block text-sm font-medium text-foreground">
               Branch
             </label>
             <select
@@ -117,7 +117,7 @@ export default function SetupPage() {
               onChange={(e) => setBranch(e.target.value)}
               required
               disabled={!company}
-              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed"
+              className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-ring/20 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed"
             >
               <option value="">Select Branch</option>
               {selectedCompany?.branches.map((b) => (
@@ -130,14 +130,14 @@ export default function SetupPage() {
 
           {/* Role (read-only for now) */}
           <div>
-            <label htmlFor="role" className="mb-1.5 block text-sm font-medium text-slate-700">
+            <label htmlFor="role" className="mb-1.5 block text-sm font-medium text-foreground">
               Role
             </label>
             <select
               id="role"
               value={role}
               disabled
-              className="w-full rounded-xl border border-slate-200 bg-slate-100 px-4 py-3 text-sm text-slate-600 cursor-not-allowed"
+              className="w-full rounded-xl border border-input bg-muted px-4 py-3 text-sm text-muted-foreground cursor-not-allowed"
             >
               <option value="store_manager">Store Manager</option>
             </select>
@@ -147,7 +147,7 @@ export default function SetupPage() {
           <button
             type="submit"
             disabled={submitting || !company || !branch}
-            className="w-full rounded-xl bg-emerald-600 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? "Saving…" : "Continue to Dashboard →"}
           </button>

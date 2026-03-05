@@ -28,9 +28,9 @@ const riskConfig: Record<ExpiryRisk, {
   icon: React.ElementType;
   dotColor: string;
 }> = {
-  High: { variant: "danger", icon: ShieldAlert, dotColor: "bg-red-500" },
-  Medium: { variant: "warning", icon: AlertTriangle, dotColor: "bg-amber-500" },
-  Low: { variant: "success", icon: ShieldCheck, dotColor: "bg-emerald-500" },
+  High: { variant: "danger", icon: ShieldAlert, dotColor: "bg-destructive" },
+  Medium: { variant: "warning", icon: AlertTriangle, dotColor: "bg-chart-4" },
+  Low: { variant: "success", icon: ShieldCheck, dotColor: "bg-primary" },
 };
 
 interface Props {
@@ -94,7 +94,7 @@ export default function StoreTable({ data }: Props) {
                   transition={{ duration: 0.25, delay: 0.04 * i }}
                   className={cn(
                     "border-b transition-colors hover:bg-muted/30",
-                    risk === "High" && "bg-red-50/30"
+                    risk === "High" && "bg-destructive/10"
                   )}
                 >
                   <TableCell className="font-medium text-foreground">
@@ -117,7 +117,7 @@ export default function StoreTable({ data }: Props) {
                           transition={{ duration: 0.6, delay: 0.04 * i + 0.2 }}
                           className={cn(
                             "h-full rounded-full",
-                            stockPercent > 60 ? "bg-emerald-400" : stockPercent > 30 ? "bg-amber-400" : "bg-red-400",
+                            stockPercent > 60 ? "bg-primary" : stockPercent > 30 ? "bg-chart-4" : "bg-destructive",
                           )}
                         />
                       </div>
@@ -126,7 +126,7 @@ export default function StoreTable({ data }: Props) {
                   <TableCell>
                     <span className={cn(
                       "font-mono text-sm tabular-nums",
-                      row.expiryDays <= 3 ? "font-semibold text-red-600" : "text-muted-foreground",
+                      row.expiryDays <= 3 ? "font-semibold text-destructive" : "text-muted-foreground",
                     )}>
                       {row.expiryDays}d
                     </span>
