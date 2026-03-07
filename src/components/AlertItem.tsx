@@ -62,6 +62,11 @@ const priorityConfig: Record<
   SmartAlert["priority"],
   { dot: string; text: string; bg: string }
 > = {
+  critical: {
+    dot: "bg-red-600 animate-pulse",
+    text: "text-red-600",
+    bg: "bg-red-600/10",
+  },
   high: {
     dot: "bg-destructive",
     text: "text-destructive",

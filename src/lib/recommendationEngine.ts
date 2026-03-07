@@ -1,4 +1,5 @@
 // ── Mock data & rule-based recommendation engine ──
+// Current Date: March 7, 2026
 
 export type RecommendationType = "transfer" | "discount" | "donation";
 
@@ -28,49 +29,71 @@ export interface GeneratedRecommendation {
   units: number;
 }
 
-// ── Mock inventory for the current store ──
+// ── Mock inventory for the current store (FreshMart Union Square - March 7, 2026) ──
 
 export function getMockInventory(branch: string): InventoryItem[] {
   return [
-    { product: "Milk (1L)", branch, stock: 50, expiryDays: 2, salesPerDay: 15 },
-    { product: "Bread (White)", branch, stock: 80, expiryDays: 1, salesPerDay: 25 },
-    { product: "Fresh Juice (500ml)", branch, stock: 35, expiryDays: 3, salesPerDay: 8 },
-    { product: "Yogurt (200g)", branch, stock: 60, expiryDays: 4, salesPerDay: 18 },
-    { product: "Paneer (200g)", branch, stock: 25, expiryDays: 2, salesPerDay: 5 },
-    { product: "Eggs (12 pack)", branch, stock: 40, expiryDays: 7, salesPerDay: 12 },
-    { product: "Butter (100g)", branch, stock: 30, expiryDays: 10, salesPerDay: 6 },
-    { product: "Cheese Slices", branch, stock: 20, expiryDays: 5, salesPerDay: 4 },
+    { product: "Organic Whole Milk (1 Gallon)", branch, stock: 12, expiryDays: 2, salesPerDay: 18 },
+    { product: "Butter Croissants (4ct)", branch, stock: 8, expiryDays: 1, salesPerDay: 12 },
+    { product: "Cold Pressed Green Juice (12oz)", branch, stock: 28, expiryDays: 2, salesPerDay: 12 },
+    { product: "Chobani Greek Yogurt (5.3oz)", branch, stock: 45, expiryDays: 8, salesPerDay: 15 },
+    { product: "Fresh Chicken Breast (per lb)", branch, stock: 38, expiryDays: 2, salesPerDay: 25 },
+    { product: "Organic Free-Range Eggs (18ct)", branch, stock: 32, expiryDays: 12, salesPerDay: 16 },
+    { product: "Land O'Lakes Butter (1lb)", branch, stock: 42, expiryDays: 25, salesPerDay: 12 },
+    { product: "Tillamook Sharp Cheddar (8oz)", branch, stock: 28, expiryDays: 38, salesPerDay: 7 },
+    { product: "Fresh Strawberries (16oz)", branch, stock: 22, expiryDays: 2, salesPerDay: 15 },
+    { product: "Artisan Sourdough Loaf", branch, stock: 6, expiryDays: 1, salesPerDay: 14 },
+    { product: "Atlantic Salmon Fillet (per lb)", branch, stock: 18, expiryDays: 1, salesPerDay: 10 },
+    { product: "85% Lean Ground Beef (per lb)", branch, stock: 24, expiryDays: 1, salesPerDay: 18 },
   ];
 }
 
-// ── Mock demand from other branches ──
+// ── Mock demand from other FreshMart branches ──
 
 export function getMockBranchDemand(currentBranch: string): BranchDemand[] {
   const allBranches = [
-    { branch: "Branch 1", product: "Milk (1L)", demandPerDay: 22, currentStock: 10 },
-    { branch: "Branch 2", product: "Milk (1L)", demandPerDay: 18, currentStock: 40 },
-    { branch: "Branch 9", product: "Milk (1L)", demandPerDay: 25, currentStock: 8 },
+    // Organic Whole Milk - High demand across stores
+    { branch: "FreshMart Upper West Side", product: "Organic Whole Milk (1 Gallon)", demandPerDay: 22, currentStock: 56 },
+    { branch: "FreshMart Park Slope", product: "Organic Whole Milk (1 Gallon)", demandPerDay: 14, currentStock: 18 },
+    { branch: "FreshMart Jersey City", product: "Organic Whole Milk (1 Gallon)", demandPerDay: 12, currentStock: 8 },
+    { branch: "FreshMart Back Bay", product: "Organic Whole Milk (1 Gallon)", demandPerDay: 16, currentStock: 24 },
 
-    { branch: "Branch 1", product: "Bread (White)", demandPerDay: 30, currentStock: 12 },
-    { branch: "Branch 2", product: "Bread (White)", demandPerDay: 15, currentStock: 50 },
-    { branch: "Branch 9", product: "Bread (White)", demandPerDay: 20, currentStock: 5 },
+    // Butter Croissants - Bakery high turnover
+    { branch: "FreshMart Upper West Side", product: "Butter Croissants (4ct)", demandPerDay: 14, currentStock: 12 },
+    { branch: "FreshMart Jersey City", product: "Butter Croissants (4ct)", demandPerDay: 10, currentStock: 28 },
+    { branch: "FreshMart Rittenhouse", product: "Butter Croissants (4ct)", demandPerDay: 8, currentStock: 6 },
 
-    { branch: "Branch 1", product: "Fresh Juice (500ml)", demandPerDay: 12, currentStock: 6 },
-    { branch: "Branch 2", product: "Fresh Juice (500ml)", demandPerDay: 5, currentStock: 30 },
+    // Green Juice - Premium item
+    { branch: "FreshMart Georgetown", product: "Cold Pressed Green Juice (12oz)", demandPerDay: 10, currentStock: 38 },
+    { branch: "FreshMart Rittenhouse", product: "Cold Pressed Green Juice (12oz)", demandPerDay: 8, currentStock: 45 },
 
-    { branch: "Branch 1", product: "Yogurt (200g)", demandPerDay: 20, currentStock: 15 },
-    { branch: "Branch 9", product: "Yogurt (200g)", demandPerDay: 14, currentStock: 5 },
+    // Yogurt - Steady demand
+    { branch: "FreshMart Back Bay", product: "Chobani Greek Yogurt (5.3oz)", demandPerDay: 18, currentStock: 78 },
+    { branch: "FreshMart Park Slope", product: "Chobani Greek Yogurt (5.3oz)", demandPerDay: 12, currentStock: 32 },
 
-    { branch: "Branch 1", product: "Paneer (200g)", demandPerDay: 8, currentStock: 3 },
-    { branch: "Branch 2", product: "Paneer (200g)", demandPerDay: 4, currentStock: 20 },
+    // Fresh Chicken - High demand meat
+    { branch: "FreshMart Upper West Side", product: "Fresh Chicken Breast (per lb)", demandPerDay: 28, currentStock: 42 },
+    { branch: "FreshMart Georgetown", product: "Fresh Chicken Breast (per lb)", demandPerDay: 22, currentStock: 18 },
 
-    { branch: "Branch 1", product: "Eggs (12 pack)", demandPerDay: 10, currentStock: 30 },
-    { branch: "Branch 9", product: "Eggs (12 pack)", demandPerDay: 8, currentStock: 25 },
+    // Eggs - Weekend brunch demand
+    { branch: "FreshMart Park Slope", product: "Organic Free-Range Eggs (18ct)", demandPerDay: 14, currentStock: 22 },
+    { branch: "FreshMart Jersey City", product: "Organic Free-Range Eggs (18ct)", demandPerDay: 12, currentStock: 18 },
 
-    { branch: "Branch 1", product: "Butter (100g)", demandPerDay: 5, currentStock: 20 },
+    // Fresh Strawberries - Seasonal
+    { branch: "FreshMart Upper West Side", product: "Fresh Strawberries (16oz)", demandPerDay: 18, currentStock: 24 },
+    { branch: "FreshMart Back Bay", product: "Fresh Strawberries (16oz)", demandPerDay: 12, currentStock: 16 },
 
-    { branch: "Branch 1", product: "Cheese Slices", demandPerDay: 6, currentStock: 8 },
-    { branch: "Branch 9", product: "Cheese Slices", demandPerDay: 3, currentStock: 15 },
+    // Sourdough - Popular artisan bread
+    { branch: "FreshMart Rittenhouse", product: "Artisan Sourdough Loaf", demandPerDay: 10, currentStock: 22 },
+    { branch: "FreshMart Georgetown", product: "Artisan Sourdough Loaf", demandPerDay: 12, currentStock: 8 },
+
+    // Salmon - Premium seafood
+    { branch: "FreshMart Back Bay", product: "Atlantic Salmon Fillet (per lb)", demandPerDay: 14, currentStock: 32 },
+    { branch: "FreshMart Georgetown", product: "Atlantic Salmon Fillet (per lb)", demandPerDay: 10, currentStock: 12 },
+
+    // Ground Beef - Steady demand
+    { branch: "FreshMart Jersey City", product: "85% Lean Ground Beef (per lb)", demandPerDay: 20, currentStock: 45 },
+    { branch: "FreshMart Park Slope", product: "85% Lean Ground Beef (per lb)", demandPerDay: 15, currentStock: 28 },
   ];
 
   return allBranches.filter((d) => d.branch !== currentBranch);

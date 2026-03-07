@@ -12,7 +12,7 @@ export type AlertType =
   | "demand-mismatch"
   | "recommendation";
 
-export type AlertPriority = "high" | "medium" | "low";
+export type AlertPriority = "critical" | "high" | "medium" | "low";
 
 export interface SmartAlert {
   id: string;
@@ -51,12 +51,14 @@ export function generateAlerts(
 
     // ── 1. Expiry Risk Alert ──
     if (risk === "High") {
+      // Critical: expires today with significant stock at risk
+      const isCritical = item.expiryDays <= 1 && surplus >= 5;
       alerts.push({
         id: `alert-${id++}`,
         type: "expiry-risk",
-        priority: item.expiryDays <= 2 ? "high" : "medium",
+        priority: isCritical ? "critical" : item.expiryDays <= 2 ? "high" : "medium",
         product: item.product,
-        title: "Expiry Risk Detected",
+        title: isCritical ? "CRITICAL: Imminent Expiry" : "Expiry Risk Detected",
         message: `${item.product} has ${item.stock} units but only ${expectedSales} can sell before expiry in ${item.expiryDays} day(s). ${surplus} units at risk of waste.`,
         metric: `${item.expiryDays}d left`,
       });
@@ -118,8 +120,8 @@ export function generateAlerts(
     }
   }
 
-  // Sort by priority: high → medium → low
-  const order: Record<AlertPriority, number> = { high: 0, medium: 1, low: 2 };
+  // Sort by priority: critical → high → medium → low
+  const order: Record<AlertPriority, number> = { critical: 0, high: 1, medium: 2, low: 3 };
   alerts.sort((a, b) => order[a.priority] - order[b.priority]);
 
   return alerts;
@@ -128,5 +130,5 @@ export function generateAlerts(
 // ── Get the most critical alert (for banner) ──
 
 export function getCriticalAlert(alerts: SmartAlert[]): SmartAlert | null {
-  return alerts.find((a) => a.priority === "high") ?? null;
+  return alerts.find((a) => a.priority === "critical" || a.priority === "high") ?? null;
 }
