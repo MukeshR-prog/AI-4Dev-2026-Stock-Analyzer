@@ -16,6 +16,9 @@ import {
   Bell,
   BrainCircuit,
   LayoutGrid,
+  ArrowLeftRight,
+  Users,
+  ClipboardList,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -45,6 +48,12 @@ const analyticsNav: NavItem[] = [
   { href: "/dashboard/branch-insights", label: "Branch Insights", icon: Building2 },
   { href: "/dashboard/recommendations", label: "Recommendations", icon: Lightbulb },
   { href: "/dashboard/impact", label: "Waste Impact", icon: BarChart3 },
+];
+
+const operationsNav: NavItem[] = [
+  { href: "/dashboard/operations", label: "Operations Center", icon: ClipboardList },
+  { href: "/dashboard/transfers", label: "Stock Transfers", icon: ArrowLeftRight },
+  { href: "/dashboard/directory", label: "Branch Directory", icon: Users },
 ];
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -161,6 +170,11 @@ export default function Sidebar() {
         <SectionLabel>Analytics</SectionLabel>
         <div className="space-y-0.5">
           {analyticsNav.map(renderNavItem)}
+        </div>
+
+        <SectionLabel>Operations</SectionLabel>
+        <div className="space-y-0.5">
+          {operationsNav.map(renderNavItem)}
         </div>
       </nav>
 

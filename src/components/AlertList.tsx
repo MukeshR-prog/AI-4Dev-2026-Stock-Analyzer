@@ -15,6 +15,7 @@ interface Props {
 
 const priorities: { value: AlertPriority | "all"; label: string }[] = [
   { value: "all", label: "All" },
+  { value: "critical", label: "Critical" },
   { value: "high", label: "High" },
   { value: "medium", label: "Medium" },
   { value: "low", label: "Low" },
@@ -43,6 +44,7 @@ export default function AlertList({ alerts, showViewAll = true, limit }: Props) 
     setCurrentPage(1);
   };
 
+  const criticalCount = alerts.filter((a) => a.priority === "critical").length;
   const highCount = alerts.filter((a) => a.priority === "high").length;
   const mediumCount = alerts.filter((a) => a.priority === "medium").length;
   const lowCount = alerts.filter((a) => a.priority === "low").length;
@@ -63,6 +65,12 @@ export default function AlertList({ alerts, showViewAll = true, limit }: Props) 
 
         {/* Priority summary pills */}
         <div className="flex items-center gap-2 text-xs">
+          {criticalCount > 0 && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-red-600/10 px-2.5 py-0.5 font-bold text-red-600 animate-pulse">
+              <span className="h-1.5 w-1.5 rounded-full bg-red-600" />
+              {criticalCount} critical
+            </span>
+          )}
           <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-2.5 py-0.5 font-medium text-destructive">
             <span className="h-1.5 w-1.5 rounded-full bg-destructive" />
             {highCount} high
