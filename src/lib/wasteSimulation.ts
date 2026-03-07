@@ -28,6 +28,13 @@ export interface RecommendationEffect {
   unitsSaved: number;
 }
 
+// ── Realistic effectiveness rates for each action type ──
+const EFFECTIVENESS_RATES: Record<string, number> = {
+  transfer: 0.85,  // 85% - some logistics delays, minor spoilage in transit
+  discount: 0.65,  // 65% - not all discounted items sell, some customers skip
+  donation: 0.90,  // 90% - most donated, small portion may be rejected
+};
+
 // ── Build per-product waste projections ──
 
 export function buildWasteProjections(
@@ -39,11 +46,14 @@ export function buildWasteProjections(
     const sellableUnits = Math.min(item.stock, Math.round(item.salesPerDay * item.expiryDays));
     const wasteBefore = Math.max(0, item.stock - sellableUnits);
 
-    // Find recommendations that address this product
+    // Find recommendations that address this product with realistic effectiveness
     const productRecs = recommendations.filter((r) => r.product === item.product);
-    const unitsAddressed = productRecs.reduce((sum, r) => sum + r.units, 0);
+    const unitsAddressed = productRecs.reduce((sum, r) => {
+      const rate = EFFECTIVENESS_RATES[r.type] ?? 0.7;
+      return sum + Math.round(r.units * rate);
+    }, 0);
 
-    // After applying recommendations, waste is reduced
+    // After applying recommendations, waste is reduced (but not perfectly)
     const wasteAfter = Math.max(0, wasteBefore - unitsAddressed);
 
     return {

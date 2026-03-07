@@ -28,6 +28,15 @@ export interface BranchInsight {
   inventory: number;
   demandLevel: "High Demand" | "Balanced" | "Low Demand";
   transferOpportunity: "Send Stock" | "Receive Stock" | "None";
+  wastePercentage?: number;
+  revenue?: number;
+  growthRate?: number;
+  manager?: string;
+  staffCount?: number;
+  region?: string;
+  rating?: number;
+  lastRestocked?: string;
+  topCategory?: string;
 }
 
 export interface Recommendation {

@@ -32,14 +32,14 @@ export interface GeneratedRecommendation {
 
 export function getMockInventory(branch: string): InventoryItem[] {
   return [
-    { product: "Milk (1L)", branch, stock: 50, expiryDays: 2, salesPerDay: 15 },
-    { product: "Bread (White)", branch, stock: 80, expiryDays: 1, salesPerDay: 25 },
-    { product: "Fresh Juice (500ml)", branch, stock: 35, expiryDays: 3, salesPerDay: 8 },
-    { product: "Yogurt (200g)", branch, stock: 60, expiryDays: 4, salesPerDay: 18 },
-    { product: "Paneer (200g)", branch, stock: 25, expiryDays: 2, salesPerDay: 5 },
-    { product: "Eggs (12 pack)", branch, stock: 40, expiryDays: 7, salesPerDay: 12 },
-    { product: "Butter (100g)", branch, stock: 30, expiryDays: 10, salesPerDay: 6 },
-    { product: "Cheese Slices", branch, stock: 20, expiryDays: 5, salesPerDay: 4 },
+    { product: "Milk (1L)", branch, stock: 24, expiryDays: 3, salesPerDay: 6 },
+    { product: "Bread (White)", branch, stock: 32, expiryDays: 2, salesPerDay: 12 },
+    { product: "Fresh Juice (500ml)", branch, stock: 18, expiryDays: 4, salesPerDay: 3 },
+    { product: "Yogurt (200g)", branch, stock: 28, expiryDays: 5, salesPerDay: 6 },
+    { product: "Paneer (200g)", branch, stock: 14, expiryDays: 3, salesPerDay: 3 },
+    { product: "Eggs (12 pack)", branch, stock: 20, expiryDays: 10, salesPerDay: 4 },
+    { product: "Butter (100g)", branch, stock: 12, expiryDays: 14, salesPerDay: 2 },
+    { product: "Cheese Slices", branch, stock: 10, expiryDays: 7, salesPerDay: 2 },
   ];
 }
 
@@ -47,30 +47,30 @@ export function getMockInventory(branch: string): InventoryItem[] {
 
 export function getMockBranchDemand(currentBranch: string): BranchDemand[] {
   const allBranches = [
-    { branch: "Branch 1", product: "Milk (1L)", demandPerDay: 22, currentStock: 10 },
-    { branch: "Branch 2", product: "Milk (1L)", demandPerDay: 18, currentStock: 40 },
-    { branch: "Branch 9", product: "Milk (1L)", demandPerDay: 25, currentStock: 8 },
+    { branch: "Branch 1", product: "Milk (1L)", demandPerDay: 8, currentStock: 6 },
+    { branch: "Branch 2", product: "Milk (1L)", demandPerDay: 5, currentStock: 18 },
+    { branch: "Branch 9", product: "Milk (1L)", demandPerDay: 7, currentStock: 4 },
 
-    { branch: "Branch 1", product: "Bread (White)", demandPerDay: 30, currentStock: 12 },
-    { branch: "Branch 2", product: "Bread (White)", demandPerDay: 15, currentStock: 50 },
-    { branch: "Branch 9", product: "Bread (White)", demandPerDay: 20, currentStock: 5 },
+    { branch: "Branch 1", product: "Bread (White)", demandPerDay: 14, currentStock: 8 },
+    { branch: "Branch 2", product: "Bread (White)", demandPerDay: 10, currentStock: 24 },
+    { branch: "Branch 9", product: "Bread (White)", demandPerDay: 11, currentStock: 6 },
 
-    { branch: "Branch 1", product: "Fresh Juice (500ml)", demandPerDay: 12, currentStock: 6 },
-    { branch: "Branch 2", product: "Fresh Juice (500ml)", demandPerDay: 5, currentStock: 30 },
+    { branch: "Branch 1", product: "Fresh Juice (500ml)", demandPerDay: 4, currentStock: 3 },
+    { branch: "Branch 2", product: "Fresh Juice (500ml)", demandPerDay: 3, currentStock: 12 },
 
-    { branch: "Branch 1", product: "Yogurt (200g)", demandPerDay: 20, currentStock: 15 },
-    { branch: "Branch 9", product: "Yogurt (200g)", demandPerDay: 14, currentStock: 5 },
+    { branch: "Branch 1", product: "Yogurt (200g)", demandPerDay: 7, currentStock: 8 },
+    { branch: "Branch 9", product: "Yogurt (200g)", demandPerDay: 5, currentStock: 4 },
 
-    { branch: "Branch 1", product: "Paneer (200g)", demandPerDay: 8, currentStock: 3 },
-    { branch: "Branch 2", product: "Paneer (200g)", demandPerDay: 4, currentStock: 20 },
+    { branch: "Branch 1", product: "Paneer (200g)", demandPerDay: 4, currentStock: 2 },
+    { branch: "Branch 2", product: "Paneer (200g)", demandPerDay: 3, currentStock: 10 },
 
-    { branch: "Branch 1", product: "Eggs (12 pack)", demandPerDay: 10, currentStock: 30 },
-    { branch: "Branch 9", product: "Eggs (12 pack)", demandPerDay: 8, currentStock: 25 },
+    { branch: "Branch 1", product: "Eggs (12 pack)", demandPerDay: 5, currentStock: 12 },
+    { branch: "Branch 9", product: "Eggs (12 pack)", demandPerDay: 4, currentStock: 10 },
 
-    { branch: "Branch 1", product: "Butter (100g)", demandPerDay: 5, currentStock: 20 },
+    { branch: "Branch 1", product: "Butter (100g)", demandPerDay: 2, currentStock: 8 },
 
-    { branch: "Branch 1", product: "Cheese Slices", demandPerDay: 6, currentStock: 8 },
-    { branch: "Branch 9", product: "Cheese Slices", demandPerDay: 3, currentStock: 15 },
+    { branch: "Branch 1", product: "Cheese Slices", demandPerDay: 3, currentStock: 4 },
+    { branch: "Branch 9", product: "Cheese Slices", demandPerDay: 2, currentStock: 6 },
   ];
 
   return allBranches.filter((d) => d.branch !== currentBranch);

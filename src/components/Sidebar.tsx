@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   LayoutDashboard,
   Store,
@@ -9,15 +10,38 @@ import {
   Lightbulb,
   BarChart3,
   Sparkles,
+  ChevronDown,
+  ChevronRight,
+  Package,
+  Bell,
+  BrainCircuit,
+  LayoutGrid,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const mainNav = [
+interface NavItem {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  children?: NavItem[];
+}
+
+const mainNav: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/dashboard/my-store", label: "My Store", icon: Store },
+  {
+    href: "/dashboard/my-store",
+    label: "My Store",
+    icon: Store,
+    children: [
+      { href: "/dashboard/my-store", label: "Overview", icon: LayoutGrid },
+      { href: "/dashboard/my-store/inventory", label: "Inventory", icon: Package },
+      { href: "/dashboard/my-store/alerts", label: "Alerts", icon: Bell },
+      { href: "/dashboard/my-store/insights", label: "AI Insights", icon: BrainCircuit },
+    ],
+  },
 ];
 
-const analyticsNav = [
+const analyticsNav: NavItem[] = [
   { href: "/dashboard/branch-insights", label: "Branch Insights", icon: Building2 },
   { href: "/dashboard/recommendations", label: "Recommendations", icon: Lightbulb },
   { href: "/dashboard/impact", label: "Waste Impact", icon: BarChart3 },
@@ -31,31 +55,88 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function Sidebar() {
-  const pathname = usePathname();
+interface NavLinkProps {
+  link: NavItem;
+  pathname: string;
+  isChild?: boolean;
+}
 
-  const renderLink = (link: (typeof mainNav)[0]) => {
-    const isActive =
-      link.href === "/dashboard"
-        ? pathname === "/dashboard"
-        : pathname.startsWith(link.href);
-    const Icon = link.icon;
+function NavLink({ link, pathname, isChild = false }: NavLinkProps) {
+  const isActive = link.href === "/dashboard"
+    ? pathname === "/dashboard"
+    : link.href === "/dashboard/my-store"
+      ? pathname === "/dashboard/my-store"
+      : pathname.startsWith(link.href);
+  const Icon = link.icon;
 
-    return (
-      <Link
-        key={link.href}
-        href={link.href}
+  return (
+    <Link
+      href={link.href}
+      className={cn(
+        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+        isChild && "pl-10 text-[13px]",
+        isActive
+          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+          : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
+      )}
+    >
+      <Icon className={cn("h-4 w-4", isChild && "h-3.5 w-3.5")} />
+      {link.label}
+    </Link>
+  );
+}
+
+interface CollapsibleNavProps {
+  link: NavItem;
+  pathname: string;
+}
+
+function CollapsibleNav({ link, pathname }: CollapsibleNavProps) {
+  const isParentActive = pathname.startsWith(link.href);
+  const [isOpen, setIsOpen] = useState(isParentActive);
+  const Icon = link.icon;
+
+  return (
+    <div className="space-y-0.5">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-          isActive
-            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+          "flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+          isParentActive
+            ? "bg-sidebar-accent/50 text-sidebar-accent-foreground"
             : "text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground",
         )}
       >
-        <Icon className="h-4 w-4" />
-        {link.label}
-      </Link>
-    );
+        <span className="flex items-center gap-3">
+          <Icon className="h-4 w-4" />
+          {link.label}
+        </span>
+        {isOpen ? (
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        ) : (
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        )}
+      </button>
+      
+      {isOpen && link.children && (
+        <div className="ml-2 space-y-0.5 border-l border-sidebar-border pl-2">
+          {link.children.map((child) => (
+            <NavLink key={child.href} link={child} pathname={pathname} isChild />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Sidebar() {
+  const pathname = usePathname();
+
+  const renderNavItem = (link: NavItem) => {
+    if (link.children) {
+      return <CollapsibleNav key={link.href} link={link} pathname={pathname} />;
+    }
+    return <NavLink key={link.href} link={link} pathname={pathname} />;
   };
 
   return (
@@ -74,12 +155,12 @@ export default function Sidebar() {
       <nav className="flex-1 overflow-y-auto px-3 py-2">
         <SectionLabel>Overview</SectionLabel>
         <div className="space-y-0.5">
-          {mainNav.map(renderLink)}
+          {mainNav.map(renderNavItem)}
         </div>
 
         <SectionLabel>Analytics</SectionLabel>
         <div className="space-y-0.5">
-          {analyticsNav.map(renderLink)}
+          {analyticsNav.map(renderNavItem)}
         </div>
       </nav>
 
