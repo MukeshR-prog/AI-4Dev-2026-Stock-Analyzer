@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import BranchTable from "@/components/BranchTable";
-import type { BranchInsight } from "@/types";
+import type { BranchInsight, BranchContact } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
@@ -18,6 +18,7 @@ import {
   ArrowUpRight,
   Building2,
   MapPin,
+  Loader2,
 } from "lucide-react";
 
 // Extended mock data — scoped to same company with additional metrics
@@ -59,11 +60,54 @@ interface BranchSummary {
 export default function BranchInsightsPage() {
   const { profile } = useAuth();
   const [selectedRegion, setSelectedRegion] = useState<string>("All");
+  const [branchesFromAPI, setBranchesFromAPI] = useState<BranchContact[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const companyBranches = useMemo(() => {
+  useEffect(() => {
+    async function fetchBranches() {
+      try {
+        const res = await fetch("/api/branches?active=false");
+        const data = await res.json();
+        if (data.success) setBranchesFromAPI(data.data);
+      } catch {
+        // Keep defaults
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchBranches();
+  }, []);
+
+  // Build branch insights from API data merged with analytics
+  const companyBranches: BranchInsight[] = useMemo(() => {
     if (!profile) return [];
+    // Use API branches to construct insights with computed analytics
+    if (branchesFromAPI.length > 0) {
+      return branchesFromAPI.map((b, i) => {
+        // Use analytical data from static map if available
+        const staticData = branchDataByCompany[profile.company]?.find(
+          (s) => s.branch === b.branchName
+        );
+        return staticData || {
+          branch: b.branchName,
+          salesPerDay: 100 + i * 20,
+          inventory: 500 + i * 100,
+          demandLevel: "Balanced" as const,
+          transferOpportunity: "None" as const,
+          wastePercentage: 3.5,
+          revenue: 20000 + i * 5000,
+          growthRate: 5.0,
+          manager: b.managerName,
+          staffCount: 15 + i * 2,
+          region: b.region,
+          rating: 4.3,
+          lastRestocked: "2 hours ago",
+          topCategory: "General",
+        };
+      });
+    }
     return branchDataByCompany[profile.company] || [];
-  }, [profile]);
+  }, [profile, branchesFromAPI]);
 
   const regions = useMemo(() => {
     const uniqueRegions = [...new Set(companyBranches.map((b) => b.region).filter(Boolean))] as string[];
@@ -97,6 +141,14 @@ export default function BranchInsightsPage() {
   }, [filteredBranches]);
 
   if (!profile) return null;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

@@ -1,13 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import AlertBanner from "@/components/AlertBanner";
 import AlertItem from "@/components/AlertItem";
-import { mockInventory } from "@/data/inventory";
-import { generateAlerts, getCriticalAlert, type AlertPriority } from "@/lib/alertEngine";
+import { getCriticalAlert, type AlertPriority, type SmartAlert } from "@/lib/alertEngine";
 import { motion } from "framer-motion";
-import { Bell, Filter, ArrowLeft, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Bell, Filter, ArrowLeft, Search, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
@@ -26,11 +25,24 @@ export default function AlertsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [alerts, setAlerts] = useState<SmartAlert[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const alerts = useMemo(
-    () => generateAlerts(mockInventory, profile?.branch || ""),
-    [profile?.branch],
-  );
+  useEffect(() => {
+    async function fetchAlerts() {
+      try {
+        const res = await fetch("/api/alerts");
+        const data = await res.json();
+        if (data.success) setAlerts(data.data);
+      } catch {
+        // Keep defaults
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchAlerts();
+  }, []);
+
   const criticalAlert = getCriticalAlert(alerts);
 
   // Filter alerts by priority and search
@@ -70,6 +82,14 @@ export default function AlertsPage() {
   };
 
   if (!profile) return null;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   const highCount = alerts.filter((a) => a.priority === "high").length;
   const mediumCount = alerts.filter((a) => a.priority === "medium").length;

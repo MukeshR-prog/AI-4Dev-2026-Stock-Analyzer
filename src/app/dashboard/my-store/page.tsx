@@ -1,15 +1,15 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import StoreTable from "@/components/StoreTable";
 import KPICard from "@/components/KPICard";
 import InsightCard from "@/components/InsightCard";
 import AlertBanner from "@/components/AlertBanner";
 import AlertList from "@/components/AlertList";
-import { mockInventory, calculateExpiryRisk } from "@/data/inventory";
+import { calculateExpiryRisk, type InventoryItem } from "@/data/inventory";
 import { generateExpiryInsights } from "@/lib/insightEngine";
-import { generateAlerts, getCriticalAlert } from "@/lib/alertEngine";
+import { getCriticalAlert, type SmartAlert } from "@/lib/alertEngine";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { motion } from "framer-motion";
 import {
@@ -21,27 +21,53 @@ import {
   LayoutGrid,
   Bell,
   Sparkles,
+  Loader2,
 } from "lucide-react";
 
 export default function MyStorePage() {
   const { profile } = useAuth();
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [alerts, setAlerts] = useState<SmartAlert[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const alerts = useMemo(
-    () => generateAlerts(mockInventory, profile?.branch || ""),
-    [profile?.branch],
-  );
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [invRes, alertsRes] = await Promise.all([
+          fetch("/api/inventory"),
+          fetch("/api/alerts"),
+        ]);
+        const invData = await invRes.json();
+        const alertsData = await alertsRes.json();
+        if (invData.success) setInventory(invData.data);
+        if (alertsData.success) setAlerts(alertsData.data);
+      } catch {
+        // Keep defaults
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
   const criticalAlert = getCriticalAlert(alerts);
-
-  const insights = useMemo(() => generateExpiryInsights(mockInventory), []);
-
+  const insights = generateExpiryInsights(inventory);
   const highAlertCount = alerts.filter((a) => a.priority === "high").length;
 
   if (!profile) return null;
 
-  const totalProducts = mockInventory.length;
-  const totalStock = mockInventory.reduce((sum, p) => sum + p.stock, 0);
-  const nearExpiryCount = mockInventory.filter((p) => p.expiryDays <= 5).length;
-  const highRiskCount = mockInventory.filter(
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  const totalProducts = inventory.length;
+  const totalStock = inventory.reduce((sum, p) => sum + p.stock, 0);
+  const nearExpiryCount = inventory.filter((p) => p.expiryDays <= 5).length;
+  const highRiskCount = inventory.filter(
     (p) => calculateExpiryRisk(p) === "High",
   ).length;
 
@@ -139,7 +165,7 @@ export default function MyStorePage() {
             <h2 className="text-lg font-semibold tracking-tight text-foreground mb-4">
               Inventory Overview
             </h2>
-            <StoreTable data={mockInventory} />
+            <StoreTable data={inventory} />
           </div>
         </TabsContent>
 

@@ -1,12 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import InsightCard from "@/components/InsightCard";
-import { mockInventory } from "@/data/inventory";
+import type { InventoryItem } from "@/data/inventory";
 import { generateExpiryInsights, type Insight } from "@/lib/insightEngine";
 import { motion } from "framer-motion";
-import { BrainCircuit, ArrowLeft, Search, Filter, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, AlertTriangle, TrendingUp, ArrowRightLeft } from "lucide-react";
+import { BrainCircuit, ArrowLeft, Search, Filter, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, AlertTriangle, TrendingUp, ArrowRightLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,8 +26,25 @@ export default function InsightsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(4);
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const insights = useMemo(() => generateExpiryInsights(mockInventory), []);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/inventory");
+        const data = await res.json();
+        if (data.success) setInventory(data.data);
+      } catch {
+        // Keep defaults
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const insights = useMemo(() => generateExpiryInsights(inventory), [inventory]);
 
   // Filter insights by type and search
   const filteredInsights = useMemo(() => {
@@ -75,6 +92,14 @@ export default function InsightsPage() {
   };
 
   if (!profile) return null;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

@@ -1,17 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import RecommendationCard from "@/components/RecommendationCard";
 import RecommendationSummary from "@/components/RecommendationSummary";
 import InsightCard from "@/components/InsightCard";
-import {
-  getMockInventory,
-  getMockBranchDemand,
-  generateRecommendations,
-} from "@/lib/recommendationEngine";
-import { generateRecommendationInsights } from "@/lib/insightEngine";
-import { BrainCircuit, Milk, Croissant, Coffee, Drumstick, Egg, Package, Filter, X } from "lucide-react";
+import type { GeneratedRecommendation } from "@/lib/recommendationEngine";
+import { BrainCircuit, Milk, Croissant, Coffee, Drumstick, Egg, Package, Filter, X, Loader2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
@@ -50,15 +45,23 @@ export default function RecommendationsPage() {
   const { profile } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedPriority, setSelectedPriority] = useState<string | null>(null);
+  const [recommendations, setRecommendations] = useState<GeneratedRecommendation[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const { recommendations, insights } = useMemo(() => {
-    if (!profile) return { recommendations: [], insights: [] };
-    const inventory = getMockInventory(profile.branch);
-    const demand = getMockBranchDemand(profile.branch);
-    const recs = generateRecommendations(inventory, demand);
-    const ins = generateRecommendationInsights(recs, inventory, demand);
-    return { recommendations: recs, insights: ins };
-  }, [profile]);
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/recommendations");
+        const data = await res.json();
+        if (data.success) setRecommendations(data.data);
+      } catch {
+        // Keep defaults
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   // Add category to each recommendation
   const recommendationsWithCategory = useMemo(() => {
@@ -96,6 +99,14 @@ export default function RecommendationsPage() {
   }, [recommendationsWithCategory, selectedCategory, selectedPriority]);
 
   if (!profile) return null;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   const highPriority = recommendations.filter((r) => r.priority === "high").length;
   const wasteReduction = recommendations.reduce((sum, r) => sum + r.units, 0);
@@ -294,25 +305,7 @@ export default function RecommendationsPage() {
         </div>
       )}
 
-      {/* ── AI Insights Panel ── */}
-      {insights.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <BrainCircuit className="h-5 w-5 text-primary" />
-            <h2 className="text-lg font-semibold tracking-tight text-foreground">
-              AI Insights
-            </h2>
-          </div>
-          <p className="text-sm text-muted-foreground -mt-2">
-            Why each recommendation was generated — full decision transparency.
-          </p>
-          <div className="grid gap-5 lg:grid-cols-2">
-            {insights.map((insight) => (
-              <InsightCard key={insight.id} insight={insight} />
-            ))}
-          </div>
-        </div>
-      )}
+      {/* ── AI Insights Panel ── removed: insights now come from backend */}
     </div>
   );
 }
