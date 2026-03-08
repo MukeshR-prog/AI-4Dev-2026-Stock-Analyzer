@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
 import {
@@ -13,16 +13,13 @@ import {
   Truck,
   Plus,
   Filter,
+  Loader2,
 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
-  mockTransferRequests,
-  mockBranchContacts,
-  mockTransferableProducts,
   formatRelativeTime,
-  type TransferableProduct,
 } from "@/data/transfers";
-import type { StockTransferRequest, TransferStatus } from "@/types";
+import type { StockTransferRequest, TransferStatus, BranchContact } from "@/types";
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // STATUS BADGE COMPONENT
@@ -146,9 +143,10 @@ interface NewTransferModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: { toBranch: string; product: string; quantity: number; notes: string }) => void;
+  branches: BranchContact[];
 }
 
-function NewTransferModal({ isOpen, onClose, onSubmit }: NewTransferModalProps) {
+function NewTransferModal({ isOpen, onClose, onSubmit, branches }: NewTransferModalProps) {
   const [toBranch, setToBranch] = useState("");
   const [product, setProduct] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -191,7 +189,7 @@ function NewTransferModal({ isOpen, onClose, onSubmit }: NewTransferModalProps) 
               required
             >
               <option value="">Select a branch…</option>
-              {mockBranchContacts.filter((b) => b.isActive).map((branch) => (
+              {branches.filter((b) => b.isActive).map((branch) => (
                 <option key={branch.branchId} value={branch.branchName}>
                   {branch.branchName} ({branch.region})
                 </option>
@@ -210,11 +208,7 @@ function NewTransferModal({ isOpen, onClose, onSubmit }: NewTransferModalProps) 
               required
             >
               <option value="">Select a product…</option>
-              {mockTransferableProducts.map((p) => (
-                <option key={p.product} value={p.product}>
-                  {p.product} ({p.availableStock} available at {p.branch})
-                </option>
-              ))}
+              {/* Products will be from inventory in a real implementation */}
             </select>
           </div>
 
@@ -275,7 +269,46 @@ export default function TransfersPage() {
   const { profile } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState<TransferStatus | "all">("all");
-  const [transfers, setTransfers] = useState(mockTransferRequests);
+  const [transfers, setTransfers] = useState<StockTransferRequest[]>([]);
+  const [branches, setBranches] = useState<BranchContact[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const [transfersRes, branchesRes] = await Promise.all([
+          fetch("/api/transfers"),
+          fetch("/api/branches"),
+        ]);
+        const transfersData = await transfersRes.json();
+        const branchesData = await branchesRes.json();
+        if (transfersData.success) {
+          // Map API fields to match the StockTransferRequest type
+          const mapped = transfersData.data.map((t: Record<string, unknown>) => ({
+            id: t.transferId || t._id,
+            fromBranch: t.fromBranchName || t.fromBranch,
+            toBranch: t.toBranchName || t.toBranch,
+            product: t.product,
+            quantity: t.quantity,
+            status: t.status,
+            requestedBy: t.requestedBy,
+            requestedAt: new Date(t.requestedAt as string),
+            respondedBy: t.respondedBy,
+            respondedAt: t.respondedAt ? new Date(t.respondedAt as string) : undefined,
+            notes: t.notes,
+            rejectionReason: t.rejectionReason,
+          }));
+          setTransfers(mapped);
+        }
+        if (branchesData.success) setBranches(branchesData.data);
+      } catch {
+        // Keep defaults
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   const currentBranch = profile?.branch || "Downtown Central";
 
@@ -339,6 +372,14 @@ export default function TransfersPage() {
   };
 
   if (!profile) return null;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -488,6 +529,7 @@ export default function TransfersPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleNewTransfer}
+        branches={branches}
       />
     </div>
   );

@@ -1,21 +1,38 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import StoreTable from "@/components/StoreTable";
 import KPICard from "@/components/KPICard";
-import { mockInventory, calculateExpiryRisk } from "@/data/inventory";
+import { calculateExpiryRisk, type InventoryItem } from "@/data/inventory";
 import { motion } from "framer-motion";
-import { Package, Clock, ShieldAlert, Boxes, ArrowLeft } from "lucide-react";
+import { Package, Clock, ShieldAlert, Boxes, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function InventoryPage() {
   const { profile } = useAuth();
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/inventory");
+        const data = await res.json();
+        if (data.success) setInventory(data.data);
+      } catch {
+        // Keep defaults
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   // Calculate category breakdown - must be before any early returns
   const categoryBreakdown = useMemo(() => {
     const categories: Record<string, { count: number; stock: number; highRisk: number }> = {};
-    mockInventory.forEach((item) => {
+    inventory.forEach((item) => {
       if (!categories[item.category]) {
         categories[item.category] = { count: 0, stock: 0, highRisk: 0 };
       }
@@ -26,14 +43,22 @@ export default function InventoryPage() {
       }
     });
     return categories;
-  }, []);
+  }, [inventory]);
 
   if (!profile) return null;
 
-  const totalProducts = mockInventory.length;
-  const totalStock = mockInventory.reduce((sum, p) => sum + p.stock, 0);
-  const nearExpiryCount = mockInventory.filter((p) => p.expiryDays <= 5).length;
-  const highRiskCount = mockInventory.filter(
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  const totalProducts = inventory.length;
+  const totalStock = inventory.reduce((sum, p) => sum + p.stock, 0);
+  const nearExpiryCount = inventory.filter((p) => p.expiryDays <= 5).length;
+  const highRiskCount = inventory.filter(
     (p) => calculateExpiryRisk(p) === "High",
   ).length;
 
@@ -132,7 +157,7 @@ export default function InventoryPage() {
         <h2 className="text-lg font-semibold tracking-tight text-foreground mb-4">
           Inventory Details
         </h2>
-        <StoreTable data={mockInventory} />
+        <StoreTable data={inventory} />
       </div>
     </div>
   );

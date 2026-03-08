@@ -12,31 +12,49 @@ import {
   getGeneralAIInsight,
   type WeeklyMetrics,
 } from "@/lib/groqAI";
-import { mockInventory } from "@/data/inventory";
+import { connectDB } from "@/lib/mongodb";
+import Inventory from "@/models/Inventory";
+import type { InventoryItem } from "@/data/inventory";
+
+async function getInventoryFromDB(): Promise<InventoryItem[]> {
+  await connectDB();
+  const items = await Inventory.find({}).lean();
+  return items.map((item) => ({
+    product: item.productName,
+    category: item.category,
+    stock: item.stock,
+    expiryDays: item.expiryDays,
+    salesPerDay: item.salesPerDay,
+    sku: item.sku,
+    unitPrice: item.unitPrice,
+    lastRestocked: item.lastRestocked,
+  }));
+}
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const { type, branch = "FreshMart Union Square", context } = body;
+    const inventory = await getInventoryFromDB();
 
     switch (type) {
       case "discount": {
-        const suggestions = await getAIDiscountSuggestions(mockInventory);
+        const suggestions = await getAIDiscountSuggestions(inventory);
         return NextResponse.json({ success: true, data: suggestions });
       }
 
       case "reorder": {
-        const suggestions = await getAIReorderSuggestions(mockInventory);
+        const suggestions = await getAIReorderSuggestions(inventory);
         return NextResponse.json({ success: true, data: suggestions });
       }
 
       case "actions": {
-        const tasks = await getAIActionTasks(mockInventory, branch);
+        const tasks = await getAIActionTasks(inventory, branch);
         return NextResponse.json({ success: true, data: tasks });
       }
 
       case "financial": {
-        const impacts = calculateFinancialImpact(mockInventory);
+        const impacts = calculateFinancialImpact(inventory);
         return NextResponse.json({ success: true, data: impacts });
       }
 
@@ -90,24 +108,26 @@ export async function GET(request: NextRequest) {
   const branch = searchParams.get("branch") || "FreshMart Union Square";
 
   try {
+    const inventory = await getInventoryFromDB();
+
     switch (type) {
       case "financial": {
-        const impacts = calculateFinancialImpact(mockInventory);
+        const impacts = calculateFinancialImpact(inventory);
         return NextResponse.json({ success: true, data: impacts });
       }
 
       case "discount": {
-        const suggestions = await getAIDiscountSuggestions(mockInventory);
+        const suggestions = await getAIDiscountSuggestions(inventory);
         return NextResponse.json({ success: true, data: suggestions });
       }
 
       case "reorder": {
-        const suggestions = await getAIReorderSuggestions(mockInventory);
+        const suggestions = await getAIReorderSuggestions(inventory);
         return NextResponse.json({ success: true, data: suggestions });
       }
 
       case "actions": {
-        const tasks = await getAIActionTasks(mockInventory, branch);
+        const tasks = await getAIActionTasks(inventory, branch);
         return NextResponse.json({ success: true, data: tasks });
       }
 

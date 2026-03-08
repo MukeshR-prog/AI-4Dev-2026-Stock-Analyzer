@@ -1,9 +1,9 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
+import type { InventoryItem } from "@/data/inventory";
 import {
-  getMockInventory,
   getMockBranchDemand,
   generateRecommendations,
 } from "@/lib/recommendationEngine";
@@ -20,29 +20,61 @@ import {
   Leaf,
   TrendingDown,
   BarChart3,
+  Loader2,
 } from "lucide-react";
 
 export default function ImpactPage() {
   const { profile } = useAuth();
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/inventory");
+        const data = await res.json();
+        if (data.success) setInventory(data.data);
+      } catch {
+        // Keep defaults
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   const { projections, totals, effects } = useMemo(() => {
-    if (!profile) {
+    if (!profile || inventory.length === 0) {
       return {
         projections: [],
         totals: { totalWasteBefore: 0, totalWasteAfter: 0, totalSaved: 0, reductionPercent: 0 },
         effects: [],
       };
     }
-    const inventory = getMockInventory(profile.branch);
     const demand = getMockBranchDemand(profile.branch);
-    const recs = generateRecommendations(inventory, demand);
+    const invForEngine = inventory.map((i) => ({
+      product: i.product,
+      branch: profile.branch,
+      stock: i.stock,
+      expiryDays: i.expiryDays,
+      salesPerDay: i.salesPerDay,
+    }));
+    const recs = generateRecommendations(invForEngine, demand);
     const proj = buildWasteProjections(inventory, recs);
     const tot = calculateImpactTotals(proj);
     const eff = buildRecommendationEffects(recs);
     return { projections: proj, totals: tot, effects: eff };
-  }, [profile]);
+  }, [profile, inventory]);
 
   if (!profile) return null;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">

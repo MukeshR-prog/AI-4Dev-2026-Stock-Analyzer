@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { motion } from "framer-motion";
 import {
@@ -14,8 +14,8 @@ import {
   ArrowLeftRight,
   CheckCircle2,
   XCircle,
+  Loader2,
 } from "lucide-react";
-import { mockBranchContacts } from "@/data/transfers";
 import type { BranchContact } from "@/types";
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -136,16 +136,33 @@ export default function DirectoryPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [regionFilter, setRegionFilter] = useState<string>("all");
   const [showActiveOnly, setShowActiveOnly] = useState(false);
+  const [branchContacts, setBranchContacts] = useState<BranchContact[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchBranches() {
+      try {
+        const res = await fetch("/api/branches?active=false");
+        const data = await res.json();
+        if (data.success) setBranchContacts(data.data);
+      } catch {
+        // Keep defaults
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchBranches();
+  }, []);
 
   const currentBranchName = profile?.branch || "";
 
   const regions = useMemo(() => {
-    const uniqueRegions = new Set(mockBranchContacts.map((b) => b.region));
+    const uniqueRegions = new Set(branchContacts.map((b) => b.region));
     return Array.from(uniqueRegions).sort();
-  }, []);
+  }, [branchContacts]);
 
   const filteredBranches = useMemo(() => {
-    return mockBranchContacts.filter((branch) => {
+    return branchContacts.filter((branch) => {
       // Search filter
       if (searchQuery) {
         const query = searchQuery.toLowerCase();
@@ -178,6 +195,14 @@ export default function DirectoryPage() {
 
   if (!profile) return null;
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Page Header */}
@@ -197,12 +222,12 @@ export default function DirectoryPage() {
       {/* Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="rounded-2xl border border-border bg-card p-5">
-          <p className="text-3xl font-bold text-foreground">{mockBranchContacts.length}</p>
+          <p className="text-3xl font-bold text-foreground">{branchContacts.length}</p>
           <p className="mt-1 text-sm text-muted-foreground">Total Branches</p>
         </div>
         <div className="rounded-2xl border border-border bg-card p-5">
           <p className="text-3xl font-bold text-green-600">
-            {mockBranchContacts.filter((b) => b.isActive).length}
+            {branchContacts.filter((b) => b.isActive).length}
           </p>
           <p className="mt-1 text-sm text-muted-foreground">Active Branches</p>
         </div>
@@ -255,7 +280,7 @@ export default function DirectoryPage() {
 
       {/* Results Count */}
       <p className="text-sm text-muted-foreground">
-        Showing {filteredBranches.length} of {mockBranchContacts.length} branches
+        Showing {filteredBranches.length} of {branchContacts.length} branches
       </p>
 
       {/* Branch Cards Grid */}

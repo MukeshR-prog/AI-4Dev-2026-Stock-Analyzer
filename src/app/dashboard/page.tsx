@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,11 +14,47 @@ import {
   ArrowUpRight,
   TrendingUp,
   TrendingDown,
+  Loader2,
 } from "lucide-react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 
 export default function DashboardPage() {
   const { profile } = useAuth();
+  const [stats, setStats] = useState({ nearExpiry: 0, activeSKUs: 0, transfers: 0 });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const [invRes, alertsRes, transfersRes] = await Promise.all([
+          fetch("/api/inventory"),
+          fetch("/api/alerts"),
+          fetch("/api/transfers"),
+        ]);
+        const invData = await invRes.json();
+        const alertsData = await alertsRes.json();
+        const transfersData = await transfersRes.json();
+
+        const inventory = invData.success ? invData.data : [];
+        const alerts = alertsData.success ? alertsData.data : [];
+        const transfers = transfersData.success ? transfersData.data : [];
+
+        const nearExpiry = inventory.filter((i: { expiryDays: number }) => i.expiryDays <= 5).length;
+        const pendingTransfers = transfers.filter((t: { status: string }) => t.status === "pending").length;
+
+        setStats({
+          nearExpiry,
+          activeSKUs: inventory.length,
+          transfers: pendingTransfers,
+        });
+      } catch {
+        // Keep defaults on error
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchStats();
+  }, []);
 
   if (!profile) return null;
 
@@ -51,26 +88,31 @@ export default function DashboardPage() {
 
       {/* Quick Stats */}
       <div className="grid gap-4 sm:grid-cols-3">
-        {[
+        {loading ? (
+          <div className="col-span-3 flex items-center justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          </div>
+        ) : (
+        [
           {
             label: "Products Near Expiry",
-            value: "12",
+            value: String(stats.nearExpiry),
             icon: AlertTriangle,
-            trend: { value: "+3", direction: "up" as const },
-            description: "from last week",
+            trend: { value: `${stats.nearExpiry}`, direction: stats.nearExpiry > 5 ? "up" as const : "down" as const },
+            description: "expiring within 5 days",
           },
           {
             label: "Active SKUs",
-            value: "247",
+            value: String(stats.activeSKUs),
             icon: Package,
-            trend: { value: "+12", direction: "up" as const },
-            description: "this month",
+            trend: { value: `${stats.activeSKUs}`, direction: "up" as const },
+            description: "in inventory",
           },
           {
             label: "Transfer Suggestions",
-            value: "3",
+            value: String(stats.transfers),
             icon: ArrowLeftRight,
-            trend: { value: "-1", direction: "down" as const },
+            trend: { value: `${stats.transfers}`, direction: stats.transfers > 0 ? "up" as const : "down" as const },
             description: "pending actions",
           },
         ].map((stat) => (
@@ -104,7 +146,8 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
-        ))}
+        ))
+        )}
       </div>
 
       {/* Quick Nav Cards */}
