@@ -45,11 +45,13 @@ function PriorityBadge({ priority }: { priority: "critical" | "high" | "medium" 
     medium: { color: "bg-yellow-100 text-yellow-700 border-yellow-200", icon: Clock },
     low: { color: "bg-green-100 text-green-700 border-green-200", icon: CheckCircle2 },
   };
-  const { color, icon: Icon } = config[priority];
+  // Fallback to 'medium' if priority is undefined or not in config
+  const safePriority = (priority && config[priority]) ? priority : "medium";
+  const { color, icon: Icon } = config[safePriority];
   return (
     <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${color}`}>
       <Icon className="h-3 w-3" />
-      {priority.charAt(0).toUpperCase() + priority.slice(1)}
+      {safePriority.charAt(0).toUpperCase() + safePriority.slice(1)}
     </span>
   );
 }
