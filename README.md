@@ -180,7 +180,7 @@ src/
 
 ---
 
-## 🔧 Installation & Setup
+##  Installation & Setup
 
 ### Prerequisites
 - **Node.js 20+** and npm/yarn
@@ -213,7 +213,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID=your_measurement_id
 
-# MongoDB
+# MongoDB localhost url
 MONGODB_URI=mongodb://localhost:27017/stock-analyzer
 # Or for MongoDB Atlas:
 # MONGODB_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/stock-analyzer
